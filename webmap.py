@@ -7,6 +7,8 @@ import geojson
 import os
 import webbrowser
 
+from pygments import highlight
+
 # setting up the main map for the project
 m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
 
@@ -61,17 +63,35 @@ WmsTileLayer(
 wilaya_admin_borders = os.path.join(r'layers/tipaza_admin_borders.geojson')
 
 # ########## Administrative features layers
-folium.GeoJson(
-  wilaya_admin_borders,
-  name ='W. Tipaza - Administrative Borders',
-  tooltip ='Wilaya de Tipaza',
-  style_function = lambda feature : {
-    'fillColor' : 'none',
-    'color' : 'red',
-    'weight' : '2',
-    'dashArray' : '3, 6'
-  }
-).add_to(m)
+forest_batch_style_function = lambda x: {
+  'fillColor' : 'none',
+  'color' : 'red',
+  'opacity' : 0.50,
+  'weight' : 2,
+  'dashArray' : '3, 6'}
+
+forest_batch_highlight_function = lambda x: {
+  'fillColor': '#555555', 
+  'color':'#555555', 
+  'fillOpacity': 0.50,
+  'opacity' : 0.50,
+  'weight': 2,
+  'dashArray' : '3, 6'}
+
+WILAYA_ADMIN_INFO = folium.features.GeoJson(
+    wilaya_admin_borders,
+    name = 'W. Tipaza - Administrative Borders',
+    control=True,
+    style_function=forest_batch_style_function, 
+    highlight_function=forest_batch_highlight_function,
+    tooltip=folium.features.GeoJsonTooltip(
+        # using fields from the geojson file
+        fields=['name', 'area', 'density', 'city_code'],
+        aliases=['Wilaya: ', 'Area (km2 ): ', 'Density (popualtion/km2): ', 'City Code: '],
+        style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+    )
+)
+m.add_child(WILAYA_ADMIN_INFO)
 
 #################### Layer controller ####################
 
