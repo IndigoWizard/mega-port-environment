@@ -61,8 +61,23 @@ WmsTileLayer(
 #################### DATA ####################
 # Here I'll store all spatial features layers data variables despite their categories (all new data of same type should be added here)
 wilaya_admin_borders = os.path.join(r'layers/tipaza_admin_borders.geojson')
+shoreline = os.path.join(r'layers/shoreline.geojson')
+
+# ########## Natural features layers
+# ##### Shoreline
+folium.GeoJson(
+  shoreline,
+  name = 'Shoreline',
+  tooltip = 'Shoreline',
+  style_function = lambda feature : {
+    'fillColor' : 'none',
+    'color' : 'blue',
+    'weight' : 8
+  }
+).add_to(m)
 
 # ########## Administrative features layers
+# ##### Wilaya Tipaza administrative borders
 forest_batch_style_function = lambda x: {
   'fillColor' : 'none',
   'color' : 'red',
@@ -92,6 +107,8 @@ WILAYA_ADMIN_INFO = folium.features.GeoJson(
     )
 )
 m.add_child(WILAYA_ADMIN_INFO)
+
+
 
 #################### Layer controller ####################
 
