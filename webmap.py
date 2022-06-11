@@ -1,7 +1,10 @@
 # importing all project related libraries
 import folium
+from folium import features
 from folium.plugins import MiniMap
 from folium import WmsTileLayer
+import geojson
+import os
 import webbrowser
 
 # setting up the main map for the project
@@ -52,6 +55,23 @@ WmsTileLayer(
   attr='Google'
 ).add_to(m)
 
+#################### SPATIAL FEATURES LAYERS ####################
+#################### DATA ####################
+# Here I'll store all spatial features layers data variables despite their categories (all new data of same type should be added here)
+wilaya_admin_borders = os.path.join(r'layers/tipaza_admin_borders.geojson')
+
+# ########## Administrative features layers
+folium.GeoJson(
+  wilaya_admin_borders,
+  name ='W. Tipaza - Administrative Borders',
+  tooltip ='Wilaya de Tipaza',
+  style_function = lambda feature : {
+    'fillColor' : 'none',
+    'color' : 'red',
+    'weight' : '2',
+    'dashArray' : '3, 6'
+  }
+).add_to(m)
 
 #################### Layer controller ####################
 
