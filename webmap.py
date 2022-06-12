@@ -62,6 +62,7 @@ WmsTileLayer(
 # Here I'll store all spatial features layers data variables despite their categories (all new data of same type should be added here)
 wilaya_admin_borders = os.path.join(r'layers/tipaza_admin_borders.geojson')
 shoreline = os.path.join(r'layers/shoreline.geojson')
+municipalities_admin_borders = os.path.join(r'layers/municipalities_admin_borders.geojson')
 
 # ########## Natural features layers
 # ##### Shoreline
@@ -78,14 +79,14 @@ folium.GeoJson(
 
 # ########## Administrative features layers
 # ##### Wilaya Tipaza administrative borders
-forest_batch_style_function = lambda x: {
+wilaya_admin_style_function = lambda x: {
   'fillColor' : 'none',
   'color' : 'red',
   'opacity' : 0.50,
   'weight' : 2,
   'dashArray' : '3, 6'}
 
-forest_batch_highlight_function = lambda x: {
+wilaya_admin_highlight_function = lambda x: {
   'fillColor': '#555555', 
   'color':'#555555', 
   'fillOpacity': 0.50,
@@ -94,21 +95,49 @@ forest_batch_highlight_function = lambda x: {
   'dashArray' : '3, 6'}
 
 WILAYA_ADMIN_INFO = folium.features.GeoJson(
-    wilaya_admin_borders,
-    name = 'W. Tipaza - Administrative Borders',
-    control=True,
-    style_function=forest_batch_style_function, 
-    highlight_function=forest_batch_highlight_function,
-    tooltip=folium.features.GeoJsonTooltip(
-        # using fields from the geojson file
-        fields=['name', 'area', 'density', 'city_code'],
-        aliases=['Wilaya: ', 'Area (km2 ): ', 'Density (popualtion/km2): ', 'City Code: '],
-        style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
-    )
+  wilaya_admin_borders,
+  name = 'Tipaza - Wilaya Administrative Borders',
+  control = True,
+  style_function = wilaya_admin_style_function, 
+  highlight_function = wilaya_admin_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'area', 'density', 'city_code'],
+    aliases=['Wilaya: ', 'Area (km2 ): ', 'Density (popualtion/km2): ', 'City Code: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
 )
 m.add_child(WILAYA_ADMIN_INFO)
 
+# ##### Tipaza - Municipalities borders
+municipalities_admin_style_function = lambda x: {
+  'fillColor' : '#555555',
+  'color' : '#333333',
+  'fillOpacity': 0.10,
+  'opacity' : 0.50,
+  'weight' : 2}
 
+municipalities_admin_highlight_function = lambda x: {
+  'fillColor': '#555555', 
+  'color':'#555555', 
+  'fillOpacity': 0.50,
+  'opacity' : 0.90,
+  'weight': 2}
+
+MUNICIPALITIES_ADMIN_INFO = folium.features.GeoJson(
+  municipalities_admin_borders,
+  name = 'Tipaza - Municipalities Administrative Borders',
+  control = True,
+  style_function = municipalities_admin_style_function, 
+  highlight_function = municipalities_admin_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'ONS_Code'],
+    aliases=['Municipality: ', 'ONS Code: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(MUNICIPALITIES_ADMIN_INFO)
 
 #################### Layer controller ####################
 
