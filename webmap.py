@@ -65,6 +65,7 @@ shoreline = os.path.join(r'layers/shoreline.geojson')
 municipalities_admin_borders = os.path.join(r'layers/municipalities_admin_borders.geojson')
 forests_affected_zones = os.path.join(r'layers/forests_affected_zones.geojson')
 forests_preserved_natural_area = os.path.join(r'layers/forest_preserved_natural_area.geojson')
+forest_total = os.path.join(r'layers/forest_affecter_total.geojson')
 
 
 # ########## Natural features layers
@@ -103,7 +104,7 @@ FORESTS_AFFECTED_INFO = folium.features.GeoJson(
   highlight_function = forests_az_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
     # using fields from the geojson file
-    fields=['name', 'section', 'ilot', 'affected_area'],
+    fields=['name', 'section', 'ilot', 'area'],
     aliases=['Name: ', 'Section: ', 'Ilot: ', 'Superficie Touchee (Ha): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
   )
