@@ -63,6 +63,7 @@ WmsTileLayer(
 wilaya_admin_borders = os.path.join(r'layers/tipaza_admin_borders.geojson')
 shoreline = os.path.join(r'layers/shoreline.geojson')
 municipalities_admin_borders = os.path.join(r'layers/municipalities_admin_borders.geojson')
+forests_affected_zones = os.path.join(r'layers/forests_affected_zones.geojson')
 
 # ########## Natural features layers
 # ##### Shoreline
@@ -76,6 +77,36 @@ folium.GeoJson(
     'weight' : 8
   }
 ).add_to(m)
+
+# ##### Affected Forests zones
+forests_az_style_function = lambda x: {
+  'fillColor' : '#236323',
+  'color' : '#236323',
+  'fillOpacity' : 0.50,
+  'opacity' : 0.50,
+  'weight' : 2}
+
+forests_az_highlight_function = lambda x: {
+  'fillColor': '#236323', 
+  'color':'#236323', 
+  'fillOpacity': 0.80,
+  'opacity' : 0.50,
+  'weight': 2}
+
+FORESTS_AFFECTED_INFO = folium.features.GeoJson(
+  forests_affected_zones,
+  name = 'Forests - Affected Zones',
+  control = True,
+  style_function = forests_az_style_function, 
+  highlight_function = forests_az_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'section', 'ilot', 'affected_area'],
+    aliases=['Name: ', 'Section: ', 'Ilot: ', 'Superficie Touchee (Ha): '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(FORESTS_AFFECTED_INFO)
 
 # ########## Administrative features layers
 # ##### Wilaya Tipaza administrative borders
@@ -138,6 +169,7 @@ MUNICIPALITIES_ADMIN_INFO = folium.features.GeoJson(
   )
 )
 m.add_child(MUNICIPALITIES_ADMIN_INFO)
+
 
 #################### Layer controller ####################
 
