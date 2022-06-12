@@ -7,7 +7,13 @@ import geojson
 import os
 import webbrowser
 
-from pygments import highlight
+################### NEXT TASKS
+# YOU JUST UPDATED FORESTS GEOJSON LAYER TO INCLUDE CONSTRUCTION SITE TOP HILL and the Port plan as well that needs to be added next: go to 'C:\Users\DELL\Documents\GitHub\My-Forks\PORT GEOJSON LATEST UPDATE'
+
+# zone logistiques
+# variante definitive du port (updated in shape and name see above)
+# construction zone
+# farm land
 
 # setting up the main map for the project
 m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
