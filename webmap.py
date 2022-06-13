@@ -70,7 +70,7 @@ forests_affected_zones = os.path.join(r'layers/forests_affected_zones.geojson')
 forests_preserved_natural_area = os.path.join(r'layers/forest_preserved_natural_area.geojson')
 forest_total = os.path.join(r'layers/forest_affecter_total.geojson')
 logistic_zones = os.path.join(r'layers/logistic_zones.geojson')
-
+port_infrastructure = os.path.join(r'layers/port_main_infrastructure.geojson')
 
 # ########## Administrative features layers
 # ##### Wilaya Tipaza administrative borders
@@ -79,7 +79,8 @@ wilaya_admin_style_function = lambda x: {
   'color' : 'red',
   'opacity' : 0.50,
   'weight' : 2,
-  'dashArray' : '3, 6'}
+  'dashArray' : '3, 6'
+}
 
 wilaya_admin_highlight_function = lambda x: {
   'fillColor': '#555555', 
@@ -87,7 +88,8 @@ wilaya_admin_highlight_function = lambda x: {
   'fillOpacity': 0.50,
   'opacity' : 0.50,
   'weight': 2,
-  'dashArray' : '3, 6'}
+  'dashArray' : '3, 6'
+}
 
 WILAYA_ADMIN_INFO = folium.features.GeoJson(
   wilaya_admin_borders,
@@ -110,14 +112,16 @@ municipalities_admin_style_function = lambda x: {
   'color' : '#333333',
   'fillOpacity': 0.10,
   'opacity' : 0.50,
-  'weight' : 2}
+  'weight' : 2
+}
 
 municipalities_admin_highlight_function = lambda x: {
   'fillColor': '#555555', 
   'color':'#555555', 
   'fillOpacity': 0.50,
   'opacity' : 0.90,
-  'weight': 2}
+  'weight': 2
+}
 
 MUNICIPALITIES_ADMIN_INFO = folium.features.GeoJson(
   municipalities_admin_borders,
@@ -134,6 +138,71 @@ MUNICIPALITIES_ADMIN_INFO = folium.features.GeoJson(
 )
 m.add_child(MUNICIPALITIES_ADMIN_INFO)
 
+# ########## Artificial features layers
+# ##### Logistic industrial zones
+logistic_zones_style_function = lambda x: {
+  'fillColor' : '#9e57b0',
+  'color' : '#9e57b0',
+  'fillOpacity': 0.50,
+  'opacity' : 0.50,
+  'weight' : 2
+}
+
+logistic_zones_highlight_function = lambda x: {
+  'fillColor': '#9e57b0', 
+  'color':'#9e57b0', 
+  'fillOpacity': 0.90,
+  'opacity' : 0.90,
+  'weight': 2
+}
+
+LOGISTIC_ZONES_INFO = folium.features.GeoJson(
+  logistic_zones,
+  name = 'Logistic industrial zones',
+  control = True,
+  style_function = logistic_zones_style_function, 
+  highlight_function = logistic_zones_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'area', 'district-jurisdiction', 'municipal-jurisdiction'],
+    aliases=['Name: ', 'Area (Ha)', 'Jurisdiction (District): ', 'Jurisdiction (Municipality): '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(LOGISTIC_ZONES_INFO)
+
+# ##### Port Main Infrastructure
+port_infrastructure_style_function = lambda x: {
+  'fillColor': '#555555',
+  'color': '#555555',
+  'fillOpacity': 0.50,
+  'opacity': 0.50,
+  'weight': 2
+}
+
+port_infrastructure_highlight_function = lambda x: {
+  'fillColor': '#555555',
+  'color': '#555555',
+  'fillOpacity': 0.90,
+  'opacity': 0.90,
+  'weight': 2
+}
+
+PORT_INFRASTRUCTURE_INFO = folium.features.GeoJson(
+  port_infrastructure,
+  name = 'Port Main Infrastructure',
+  control = True,
+  style_function = port_infrastructure_style_function, 
+  highlight_function = port_infrastructure_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'area'],
+    aliases=['Name: ', 'Area (Ha): '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(PORT_INFRASTRUCTURE_INFO)
+
 # ########## Natural features layers
 # ##### Shoreline
 folium.GeoJson(
@@ -149,18 +218,20 @@ folium.GeoJson(
 
 # ##### Affected Forests zones
 forests_az_style_function = lambda x: {
-  'fillColor' : '#236347',
-  'color' : '#236347',
+  'fillColor' : '#145B27',
+  'color' : '#145B27',
   'fillOpacity' : 0.50,
   'opacity' : 0.50,
-  'weight' : 2}
+  'weight' : 2
+}
 
 forests_az_highlight_function = lambda x: {
-  'fillColor': '#236347', 
-  'color':'#236347', 
+  'fillColor': '#177A31', 
+  'color':'#145B27', 
   'fillOpacity': 0.80,
   'opacity' : 0.50,
-  'weight': 2}
+  'weight': 2
+}
 
 FORESTS_AFFECTED_INFO = folium.features.GeoJson(
   forests_affected_zones,
@@ -184,7 +255,8 @@ forests_pz_style_function = lambda x: {
   'fillOpacity' : 0.50,
   'opacity' : 0.50,
   'weight' : 2,
-  'dashArray' : '3, 6'}
+  'dashArray' : '3, 6'
+}
 
 forests_pz_highlight_function = lambda x: {
   'fillColor': '#0b8a03', 
@@ -192,7 +264,8 @@ forests_pz_highlight_function = lambda x: {
   'fillOpacity': 0.80,
   'opacity' : 0.50,
   'weight': 2,
-  'dashArray' : '3, 6'}
+  'dashArray' : '3, 6'
+}
 
 FORESTS_PRESERVED_INFO = folium.features.GeoJson(
   forests_preserved_natural_area,
@@ -208,38 +281,6 @@ FORESTS_PRESERVED_INFO = folium.features.GeoJson(
   )
 )
 m.add_child(FORESTS_PRESERVED_INFO)
-
-# ########## Artificial features layers
-# ##### Logistic industrial zones
-logistic_zones_style_function = lambda x: {
-  'fillColor' : '#9e57b0',
-  'color' : '#9e57b0',
-  'fillOpacity': 0.50,
-  'opacity' : 0.50,
-  'weight' : 2}
-
-logistic_zones_highlight_function = lambda x: {
-  'fillColor': '#9e57b0', 
-  'color':'#9e57b0', 
-  'fillOpacity': 0.90,
-  'opacity' : 0.90,
-  'weight': 2}
-
-LOGISTIC_ZONES_INFO = folium.features.GeoJson(
-  logistic_zones,
-  name = 'Logistic industrial zones',
-  control = True,
-  style_function = logistic_zones_style_function, 
-  highlight_function = logistic_zones_highlight_function,
-  tooltip=folium.features.GeoJsonTooltip(
-    # using fields from the geojson file
-    fields=['name', 'area', 'district-jurisdiction', 'municipal-jurisdiction'],
-    aliases=['Name: ', 'Area (Ha)', 'Jurisdiction (District): ', 'Jurisdiction (Municipality): '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
-  )
-)
-m.add_child(LOGISTIC_ZONES_INFO)
-
 
 
 #################### Layer controller ####################
