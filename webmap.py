@@ -8,7 +8,6 @@ import os
 import webbrowser
 
 ################### NEXT TASKS
-# variante definitive du port (updated in shape and name see above)
 # construction zone
 # farm land
 
@@ -71,6 +70,7 @@ forests_preserved_natural_area = os.path.join(r'layers/forest_preserved_natural_
 forest_total = os.path.join(r'layers/forest_affecter_total.geojson')
 logistic_zones = os.path.join(r'layers/logistic_zones.geojson')
 port_infrastructure = os.path.join(r'layers/port_main_infrastructure.geojson')
+construction_zones = os.path.join(r'layers/construction_zones.geojson')
 
 # ########## Administrative features layers
 # ##### Wilaya Tipaza administrative borders
@@ -109,18 +109,20 @@ m.add_child(WILAYA_ADMIN_INFO)
 # ##### Tipaza - Municipalities borders
 municipalities_admin_style_function = lambda x: {
   'fillColor' : '#555555',
-  'color' : '#333333',
+  'color' : '#331D31',
   'fillOpacity': 0.10,
   'opacity' : 0.50,
-  'weight' : 2
+  'weight' : 3,
+  'dashArray' : '2, 6'
 }
 
 municipalities_admin_highlight_function = lambda x: {
   'fillColor': '#555555', 
-  'color':'#555555', 
-  'fillOpacity': 0.50,
+  'color':'#331D31', 
+  'fillOpacity': 0.30,
   'opacity' : 0.90,
-  'weight': 2
+  'weight': 3,
+  'dashArray' : '2, 6'
 }
 
 MUNICIPALITIES_ADMIN_INFO = folium.features.GeoJson(
@@ -202,6 +204,41 @@ PORT_INFRASTRUCTURE_INFO = folium.features.GeoJson(
   )
 )
 m.add_child(PORT_INFRASTRUCTURE_INFO)
+
+# ##### Construction zones
+construction_zones_style_function = lambda x: {
+  'fillColor': '#0000ff',
+  'color': '#0b8a03',
+  'fillOpacity': 0.50,
+  'opacity': 0.50,
+  'weight': 4,
+  'dashArray' : '3, 6'
+}
+
+construction_zones_highlight_function = lambda x: {
+  'fillColor': '#0000ff',
+  'color': '#0b8a03',
+  'fillOpacity': 0.80,
+  'opacity': 0.90,
+  'weight': 4,
+  'dashArray' : '3, 6'
+}
+
+CONSTRUCTION_ZONES_INFO = folium.features.GeoJson(
+  construction_zones,
+  name = 'Construction Zones',
+  control = True,
+  style_function = construction_zones_style_function, 
+  highlight_function = construction_zones_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['zone-designation', 'name'],
+    aliases=['Zone designation: ', 'Name: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(CONSTRUCTION_ZONES_INFO)
+
 
 # ########## Natural features layers
 # ##### Shoreline
