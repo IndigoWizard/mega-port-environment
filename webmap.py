@@ -1,8 +1,16 @@
 # importing all project related libraries
 import folium
+from folium import features
 from folium.plugins import MiniMap
 from folium import WmsTileLayer
+import geojson
+import os
 import webbrowser
+
+################### NEXT TASKS
+# variante definitive du port (updated in shape and name see above)
+# construction zone
+# farm land
 
 # setting up the main map for the project
 m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
@@ -51,6 +59,187 @@ WmsTileLayer(
   name='Google Sattelite Imagery',
   attr='Google'
 ).add_to(m)
+
+#################### SPATIAL FEATURES LAYERS ####################
+#################### DATA ####################
+# Here I'll store all spatial features layers data variables despite their categories (all new data of same type should be added here)
+wilaya_admin_borders = os.path.join(r'layers/tipaza_admin_borders.geojson')
+shoreline = os.path.join(r'layers/shoreline.geojson')
+municipalities_admin_borders = os.path.join(r'layers/municipalities_admin_borders.geojson')
+forests_affected_zones = os.path.join(r'layers/forests_affected_zones.geojson')
+forests_preserved_natural_area = os.path.join(r'layers/forest_preserved_natural_area.geojson')
+forest_total = os.path.join(r'layers/forest_affecter_total.geojson')
+logistic_zones = os.path.join(r'layers/logistic_zones.geojson')
+
+
+# ########## Administrative features layers
+# ##### Wilaya Tipaza administrative borders
+wilaya_admin_style_function = lambda x: {
+  'fillColor' : 'none',
+  'color' : 'red',
+  'opacity' : 0.50,
+  'weight' : 2,
+  'dashArray' : '3, 6'}
+
+wilaya_admin_highlight_function = lambda x: {
+  'fillColor': '#555555', 
+  'color':'#555555', 
+  'fillOpacity': 0.50,
+  'opacity' : 0.50,
+  'weight': 2,
+  'dashArray' : '3, 6'}
+
+WILAYA_ADMIN_INFO = folium.features.GeoJson(
+  wilaya_admin_borders,
+  name = 'Tipaza - Wilaya Administrative Borders',
+  control = True,
+  style_function = wilaya_admin_style_function, 
+  highlight_function = wilaya_admin_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'area', 'density', 'city_code'],
+    aliases=['Wilaya: ', 'Area (km2 ): ', 'Density (popualtion/km2): ', 'City Code: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(WILAYA_ADMIN_INFO)
+
+# ##### Tipaza - Municipalities borders
+municipalities_admin_style_function = lambda x: {
+  'fillColor' : '#555555',
+  'color' : '#333333',
+  'fillOpacity': 0.10,
+  'opacity' : 0.50,
+  'weight' : 2}
+
+municipalities_admin_highlight_function = lambda x: {
+  'fillColor': '#555555', 
+  'color':'#555555', 
+  'fillOpacity': 0.50,
+  'opacity' : 0.90,
+  'weight': 2}
+
+MUNICIPALITIES_ADMIN_INFO = folium.features.GeoJson(
+  municipalities_admin_borders,
+  name = 'Tipaza - Municipalities Administrative Borders',
+  control = True,
+  style_function = municipalities_admin_style_function, 
+  highlight_function = municipalities_admin_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'ONS_Code'],
+    aliases=['Municipality: ', 'ONS Code: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(MUNICIPALITIES_ADMIN_INFO)
+
+# ########## Natural features layers
+# ##### Shoreline
+folium.GeoJson(
+  shoreline,
+  name = 'Shoreline',
+  tooltip = 'Shoreline',
+  style_function = lambda feature : {
+    'fillColor' : 'none',
+    'color' : 'blue',
+    'weight' : 8
+  }
+).add_to(m)
+
+# ##### Affected Forests zones
+forests_az_style_function = lambda x: {
+  'fillColor' : '#236347',
+  'color' : '#236347',
+  'fillOpacity' : 0.50,
+  'opacity' : 0.50,
+  'weight' : 2}
+
+forests_az_highlight_function = lambda x: {
+  'fillColor': '#236347', 
+  'color':'#236347', 
+  'fillOpacity': 0.80,
+  'opacity' : 0.50,
+  'weight': 2}
+
+FORESTS_AFFECTED_INFO = folium.features.GeoJson(
+  forests_affected_zones,
+  name = 'Forests - Affected Zones',
+  control = True,
+  style_function = forests_az_style_function, 
+  highlight_function = forests_az_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'section', 'ilot', 'area'],
+    aliases=['Name: ', 'Section: ', 'Ilot: ', 'Superficie Touchee (Ha): '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(FORESTS_AFFECTED_INFO)
+
+# ##### Preserved Natural Forest Area
+forests_pz_style_function = lambda x: {
+  'fillColor' : '#0b8a03',
+  'color' : '#0b8a03',
+  'fillOpacity' : 0.50,
+  'opacity' : 0.50,
+  'weight' : 2,
+  'dashArray' : '3, 6'}
+
+forests_pz_highlight_function = lambda x: {
+  'fillColor': '#0b8a03', 
+  'color':'#0b8a03', 
+  'fillOpacity': 0.80,
+  'opacity' : 0.50,
+  'weight': 2,
+  'dashArray' : '3, 6'}
+
+FORESTS_PRESERVED_INFO = folium.features.GeoJson(
+  forests_preserved_natural_area,
+  name = 'Forests - Preserved Natural Zones',
+  control = True,
+  style_function = forests_pz_style_function, 
+  highlight_function = forests_pz_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'area'],
+    aliases=['Name: ', 'Superficie (Ha): '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(FORESTS_PRESERVED_INFO)
+
+# ########## Artificial features layers
+# ##### Logistic industrial zones
+logistic_zones_style_function = lambda x: {
+  'fillColor' : '#9e57b0',
+  'color' : '#9e57b0',
+  'fillOpacity': 0.50,
+  'opacity' : 0.50,
+  'weight' : 2}
+
+logistic_zones_highlight_function = lambda x: {
+  'fillColor': '#9e57b0', 
+  'color':'#9e57b0', 
+  'fillOpacity': 0.90,
+  'opacity' : 0.90,
+  'weight': 2}
+
+LOGISTIC_ZONES_INFO = folium.features.GeoJson(
+  logistic_zones,
+  name = 'Logistic industrial zones',
+  control = True,
+  style_function = logistic_zones_style_function, 
+  highlight_function = logistic_zones_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'area', 'district-jurisdiction', 'municipal-jurisdiction'],
+    aliases=['Name: ', 'Area (Ha)', 'Jurisdiction (District): ', 'Jurisdiction (Municipality): '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(LOGISTIC_ZONES_INFO)
+
 
 
 #################### Layer controller ####################
