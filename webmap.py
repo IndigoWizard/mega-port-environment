@@ -8,8 +8,7 @@ import os
 import webbrowser
 
 ################### NEXT TASKS
-# construction zone
-# farm land
+# waterways
 
 # setting up the main map for the project
 m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
@@ -63,14 +62,14 @@ WmsTileLayer(
 #################### DATA ####################
 # Here I'll store all spatial features layers data variables despite their categories (all new data of same type should be added here)
 wilaya_admin_borders = os.path.join(r'layers/tipaza_admin_borders.geojson')
-shoreline = os.path.join(r'layers/shoreline.geojson')
 municipalities_admin_borders = os.path.join(r'layers/municipalities_admin_borders.geojson')
+shoreline = os.path.join(r'layers/shoreline.geojson')
 forests_affected_zones = os.path.join(r'layers/forests_affected_zones.geojson')
 forests_preserved_natural_area = os.path.join(r'layers/forest_preserved_natural_area.geojson')
-forest_total = os.path.join(r'layers/forest_affecter_total.geojson')
 logistic_zones = os.path.join(r'layers/logistic_zones.geojson')
 port_infrastructure = os.path.join(r'layers/port_main_infrastructure.geojson')
 construction_zones = os.path.join(r'layers/construction_zones.geojson')
+agro_farm_land = os.path.join(r'layers/agro_farm_land.geojson')
 
 # ########## Administrative features layers
 # ##### Wilaya Tipaza administrative borders
@@ -318,6 +317,40 @@ FORESTS_PRESERVED_INFO = folium.features.GeoJson(
   )
 )
 m.add_child(FORESTS_PRESERVED_INFO)
+
+# ##### Agricultural and Farm lands
+agro_farm_land_style_function = lambda x: {
+  'fillColor' : '#00c632',
+  'color' : '#607254',
+  'fillOpacity' : 0.50,
+  'opacity' : 0.50,
+  'weight' : 2,
+  'dashArray' : '3, 6'
+}
+
+agro_farm_land_highlight_function = lambda x: {
+  'fillColor': '#00c632', 
+  'color':'#607254', 
+  'fillOpacity': 0.80,
+  'opacity' : 0.50,
+  'weight': 2,
+  'dashArray' : '3, 6'
+}
+
+AGRO_FARM_LAND_INFO = folium.features.GeoJson(
+  agro_farm_land,
+  name = 'Agricultural and Farm lands',
+  control = True,
+  style_function = agro_farm_land_style_function, 
+  highlight_function = agro_farm_land_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['designation'],
+    aliases=['Land designation: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(AGRO_FARM_LAND_INFO)
 
 
 #################### Layer controller ####################
