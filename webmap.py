@@ -70,6 +70,7 @@ logistic_zones = os.path.join(r'layers/logistic_zones.geojson')
 port_infrastructure = os.path.join(r'layers/port_main_infrastructure.geojson')
 construction_zones = os.path.join(r'layers/construction_zones.geojson')
 agro_farm_land = os.path.join(r'layers/agro_farm_land.geojson')
+waterways = os.path.join(r'layers/waterways.geojson')
 
 # ########## Administrative features layers
 # ##### Wilaya Tipaza administrative borders
@@ -351,6 +352,39 @@ AGRO_FARM_LAND_INFO = folium.features.GeoJson(
   )
 )
 m.add_child(AGRO_FARM_LAND_INFO)
+
+# ##### Waterways
+waterways_style_function = lambda x: {
+  'fillColor' : '#75cff0',
+  'color' :  '#75cff0',
+  'fillOpacity' : 0.50,
+  'opacity' : 0.50,
+  'weight' : 2,
+}
+
+waterways_highlight_function = lambda x: {
+  'fillColor': '#75cff0', 
+  'color': '#75cff0', 
+  'fillOpacity': 0.80,
+  'opacity' : 0.9,
+  'weight': 4,
+}
+
+WATERWAYS_INFO = folium.features.GeoJson(
+  waterways,
+  name = 'Waterways',
+  control = True,
+  style_function = waterways_style_function, 
+  highlight_function = waterways_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['name', 'type'],
+    aliases=['Name: ', 'Type: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(WATERWAYS_INFO)
+
 
 
 #################### Layer controller ####################
