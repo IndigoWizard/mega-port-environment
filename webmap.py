@@ -8,7 +8,6 @@ import os
 import webbrowser
 
 ################### NEXT TASKS
-# waterways
 
 # setting up the main map for the project
 m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
@@ -60,7 +59,8 @@ WmsTileLayer(
 
 #################### SPATIAL FEATURES LAYERS ####################
 #################### DATA ####################
-# Here I'll store all spatial features layers data variables despite their categories (all new data of same type should be added here)
+# Here I'll store all spatial features layers data variables despite their categories
+#  (all new data of same type should be added here)
 wilaya_admin_borders = os.path.join(r'layers/tipaza_admin_borders.geojson')
 municipalities_admin_borders = os.path.join(r'layers/municipalities_admin_borders.geojson')
 shoreline = os.path.join(r'layers/shoreline.geojson')
@@ -71,6 +71,7 @@ port_infrastructure = os.path.join(r'layers/port_main_infrastructure.geojson')
 construction_zones = os.path.join(r'layers/construction_zones.geojson')
 agro_farm_land = os.path.join(r'layers/agro_farm_land.geojson')
 waterways = os.path.join(r'layers/waterways.geojson')
+roads = os.path.join(r'layers/roads.geojson')
 
 # ########## Administrative features layers
 # ##### Wilaya Tipaza administrative borders
@@ -385,11 +386,39 @@ WATERWAYS_INFO = folium.features.GeoJson(
 )
 m.add_child(WATERWAYS_INFO)
 
+# roads / mobility infrastructure
+roads_style_function = lambda x: {
+  'color' : x['properties']['stroke'],
+  'opacity' : 0.50,
+  'weight' : x['properties']['stroke-width'],
+  'dashArray' : x['properties']['dashArray']
+}
 
+roads_highlight_function = lambda x: {
+  'color' : x['properties']['stroke'],
+  'opacity' : 0.9,
+  'weight' : x['properties']['stroke-width'],
+  'dashArray' : x['properties']['dashArray-highlight']
+}
+
+ROADS_INFO = folium.features.GeoJson(
+  roads,
+  name = 'roads',
+  control = True,
+  style_function = roads_style_function, 
+  highlight_function = roads_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    # using fields from the geojson file
+    fields=['Type', 'Name'],
+    aliases=['Type: ', 'Name: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+  )
+)
+m.add_child(ROADS_INFO)
 
 #################### Layer controller ####################
 
-folium.LayerControl().add_to(m)
+folium.LayerControl(collapsed=False).add_to(m)
 
 #################### Creating the map file #################### 
 
