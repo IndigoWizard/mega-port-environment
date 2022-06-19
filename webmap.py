@@ -8,6 +8,7 @@ import os
 import webbrowser
 
 ################### NEXT TASKS
+# Imagery analysis with earth-engine api
 
 # setting up the main map for the project
 m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
