@@ -75,6 +75,7 @@ roads = os.path.join(r'layers/roads.geojson')
 
 # ########## Administrative features layers
 # ##### Wilaya Tipaza administrative borders
+# style defining fuction
 wilaya_admin_style_function = lambda x: {
   'fillColor' : 'none',
   'color' : 'red',
@@ -83,6 +84,7 @@ wilaya_admin_style_function = lambda x: {
   'dashArray' : '3, 6'
 }
 
+# style change on highlight defining fuction (for the hover effect)
 wilaya_admin_highlight_function = lambda x: {
   'fillColor': '#555555', 
   'color':'#555555', 
@@ -92,6 +94,7 @@ wilaya_admin_highlight_function = lambda x: {
   'dashArray' : '3, 6'
 }
 
+# main function of drawing and displaying the spatial feature 
 WILAYA_ADMIN_INFO = folium.features.GeoJson(
   wilaya_admin_borders,
   name = 'Tipaza - Wilaya Administrative Borders',
@@ -133,15 +136,14 @@ MUNICIPALITIES_ADMIN_INFO = folium.features.GeoJson(
   style_function = municipalities_admin_style_function, 
   highlight_function = municipalities_admin_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    # using fields from the geojson file
     fields=['name', 'ONS_Code'],
     aliases=['Municipality: ', 'ONS Code: '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
 m.add_child(MUNICIPALITIES_ADMIN_INFO)
 
-# ########## Artificial features layers
+# ########## Artificial features (Infrastructure) layers
 # ##### Logistic industrial zones
 logistic_zones_style_function = lambda x: {
   'fillColor' : '#9e57b0',
@@ -166,28 +168,27 @@ LOGISTIC_ZONES_INFO = folium.features.GeoJson(
   style_function = logistic_zones_style_function, 
   highlight_function = logistic_zones_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    # using fields from the geojson file
     fields=['name', 'area', 'district-jurisdiction', 'municipal-jurisdiction'],
     aliases=['Name: ', 'Area (Ha)', 'Jurisdiction (District): ', 'Jurisdiction (Municipality): '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
 m.add_child(LOGISTIC_ZONES_INFO)
 
 # ##### Port Main Infrastructure
 port_infrastructure_style_function = lambda x: {
-  'fillColor': '#555555',
-  'color': '#555555',
+  'fillColor': '#a80223',
+  'color': '#740118',
   'fillOpacity': 0.50,
   'opacity': 0.50,
   'weight': 2
 }
 
 port_infrastructure_highlight_function = lambda x: {
-  'fillColor': '#555555',
-  'color': '#555555',
+  'fillColor': '#a80223',
+  'color': '#740118',
   'fillOpacity': 0.90,
-  'opacity': 0.90,
+  'opacity': 1,
   'weight': 2
 }
 
@@ -198,10 +199,9 @@ PORT_INFRASTRUCTURE_INFO = folium.features.GeoJson(
   style_function = port_infrastructure_style_function, 
   highlight_function = port_infrastructure_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    # using fields from the geojson file
     fields=['name', 'area'],
     aliases=['Name: ', 'Area (Ha): '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
 m.add_child(PORT_INFRASTRUCTURE_INFO)
@@ -232,14 +232,41 @@ CONSTRUCTION_ZONES_INFO = folium.features.GeoJson(
   style_function = construction_zones_style_function, 
   highlight_function = construction_zones_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    # using fields from the geojson file
     fields=['zone-designation', 'name'],
     aliases=['Zone designation: ', 'Name: '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
 m.add_child(CONSTRUCTION_ZONES_INFO)
 
+# roads / mobility infrastructure
+roads_style_function = lambda x: {
+  'color' : x['properties']['stroke'],
+  'opacity' : 0.50,
+  'weight' : x['properties']['stroke-width'],
+  'dashArray' : x['properties']['dashArray']
+}
+
+roads_highlight_function = lambda x: {
+  'color' : x['properties']['stroke'],
+  'opacity' : 0.9,
+  'weight' : x['properties']['stroke-width'],
+  'dashArray' : x['properties']['dashArray-highlight']
+}
+
+ROADS_INFO = folium.features.GeoJson(
+  roads,
+  name = 'roads',
+  control = True,
+  style_function = roads_style_function, 
+  highlight_function = roads_highlight_function,
+  tooltip=folium.features.GeoJsonTooltip(
+    fields=['Type', 'Name'],
+    aliases=['Type: ', 'Name: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
+  )
+)
+m.add_child(ROADS_INFO)
 
 # ########## Natural features layers
 # ##### Shoreline
@@ -249,8 +276,9 @@ folium.GeoJson(
   tooltip = 'Shoreline',
   style_function = lambda feature : {
     'fillColor' : 'none',
-    'color' : 'blue',
-    'weight' : 8
+    'color' : '#0070ec',
+    'weight' : 8,
+    'opacity' : 0.50,
   }
 ).add_to(m)
 
@@ -278,10 +306,9 @@ FORESTS_AFFECTED_INFO = folium.features.GeoJson(
   style_function = forests_az_style_function, 
   highlight_function = forests_az_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    # using fields from the geojson file
     fields=['name', 'section', 'ilot', 'area'],
     aliases=['Name: ', 'Section: ', 'Ilot: ', 'Superficie Touchee (Ha): '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
 m.add_child(FORESTS_AFFECTED_INFO)
@@ -312,10 +339,9 @@ FORESTS_PRESERVED_INFO = folium.features.GeoJson(
   style_function = forests_pz_style_function, 
   highlight_function = forests_pz_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    # using fields from the geojson file
     fields=['name', 'area'],
     aliases=['Name: ', 'Superficie (Ha): '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
 m.add_child(FORESTS_PRESERVED_INFO)
@@ -346,10 +372,9 @@ AGRO_FARM_LAND_INFO = folium.features.GeoJson(
   style_function = agro_farm_land_style_function, 
   highlight_function = agro_farm_land_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    # using fields from the geojson file
     fields=['designation'],
     aliases=['Land designation: '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
 m.add_child(AGRO_FARM_LAND_INFO)
@@ -378,43 +403,13 @@ WATERWAYS_INFO = folium.features.GeoJson(
   style_function = waterways_style_function, 
   highlight_function = waterways_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    # using fields from the geojson file
     fields=['name', 'type'],
     aliases=['Name: ', 'Type: '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
 m.add_child(WATERWAYS_INFO)
 
-# roads / mobility infrastructure
-roads_style_function = lambda x: {
-  'color' : x['properties']['stroke'],
-  'opacity' : 0.50,
-  'weight' : x['properties']['stroke-width'],
-  'dashArray' : x['properties']['dashArray']
-}
-
-roads_highlight_function = lambda x: {
-  'color' : x['properties']['stroke'],
-  'opacity' : 0.9,
-  'weight' : x['properties']['stroke-width'],
-  'dashArray' : x['properties']['dashArray-highlight']
-}
-
-ROADS_INFO = folium.features.GeoJson(
-  roads,
-  name = 'roads',
-  control = True,
-  style_function = roads_style_function, 
-  highlight_function = roads_highlight_function,
-  tooltip=folium.features.GeoJsonTooltip(
-    # using fields from the geojson file
-    fields=['Type', 'Name'],
-    aliases=['Type: ', 'Name: '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
-  )
-)
-m.add_child(ROADS_INFO)
 
 #################### Layer controller ####################
 
