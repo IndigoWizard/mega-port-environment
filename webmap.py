@@ -1,4 +1,7 @@
 # importing all project related libraries
+from attr import attr
+import ee
+from ee import image
 import folium
 from folium import features
 from folium.plugins import MiniMap
@@ -9,6 +12,49 @@ import webbrowser
 
 ################### NEXT TASKS
 # Imagery analysis with earth-engine api
+
+#################### Methods and Functions Configuration #################### 
+# ########## EarthEngine Setup
+# Triggering authentification to earthengine services
+#ee.Authenticate()
+
+# initializing the library
+ee.Initialize()
+
+# ##### earth-engine drawing method setup
+def add_ee_layer(self, ee_image_object, vis_params, name):
+  map_id_dict = ee.Image(ee_image_object).getMapId(vis_params)
+  folium.raster_layers.TileLayer(
+      tiles = map_id_dict['tile_fetcher'].url_format,
+      attr = 'Map Data &copy; <a href="https://earthengine.google.com/">Google Earth Engine</a>',
+      name = name,
+      overlay = True,
+      control = True
+  ).add_to(self)
+
+# configuring earth engine display rendering method to folium
+folium.Map.add_ee_layer = add_ee_layer
+
+#################### testing earthengine-api ####################
+# creating delimitation area of interest/study of the project
+aoi = ee.Geometry.Rectangle([[2.4125581916503958, 36.49689168784115], [2.1626192268066458, 36.653497195420755]])
+
+# passing a Sentinel-2 imagery
+image = ee.Image('COPERNICUS/S2_SR/20211019T104051_20211019T104645_T31SDA')
+
+# clipping the image to study area borders
+image_satellite = image.clip(aoi).divide(10000)
+
+#visual parameters for natural colors
+image_params = {
+  'bands': ['B4',  'B3',  'B2'],
+  'min': 0,
+  'max': 1,
+  'gamma': 2
+}
+
+
+#############################################################
 
 # setting up the main map for the project
 m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
@@ -410,6 +456,11 @@ WATERWAYS_INFO = folium.features.GeoJson(
   )
 )
 m.add_child(WATERWAYS_INFO)
+
+############################################################
+
+# testing main satellite image as layer
+m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
 
 
 #################### Layer controller ####################
