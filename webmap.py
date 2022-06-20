@@ -90,6 +90,24 @@ slopes_param = {
   'palette' : ['#830cab','#7556f3','#5590e7','#3bbcac','#52d965','#86ea50','#ccec5a']  # color palette for drawing the layer based on slope angle on the map
 }
 
+####################  INDECES #################### 
+# ########## NDVI (Normalized Difference Vegetation Index)
+# defining NDVI compue function that normalizes the differences between two bands
+def getNDVI(image):
+  return image.normalizedDifference(['B8', 'B4'])
+
+# clipping to AOI
+ndvi1 = getNDVI(image.clip(aoi))
+
+# NDVI visual parameters:
+# Generating a color palette as visual parameter for NDVI display:
+# White/Light Green to Dark Green : No vegetation to High/Healthy vegetation
+ndvi_params = {
+  'min': 0,
+  'max': 1,
+  'palette': ['#ffffe5', '#f7fcb9', '#78c679', '#41ab5d', '#238443', '#005a32']
+}
+
 ###########################################################
 #################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
@@ -509,6 +527,8 @@ m.add_ee_layer(elevation, elevation_params, 'Elevation')
 # adding slopes layer
 m.add_ee_layer(slopes, slopes_param, 'Slopes')
 
+# adding NDVI layers to the map
+m.add_ee_layer(ndvi1, ndvi_params, 'NDVI')
 
 #################### Layer controller ####################
 
