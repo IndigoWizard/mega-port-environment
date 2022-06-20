@@ -532,7 +532,7 @@ m.add_ee_layer(ndvi1, ndvi_params, 'NDVI')
 
 #################### Layer controller ####################
 
-folium.LayerControl(collapsed=False).add_to(m)
+folium.LayerControl(collapsed=True).add_to(m)
 
 #################### Creating the map file #################### 
 
