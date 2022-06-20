@@ -68,6 +68,27 @@ dem_params = {
   'max': 905
 }
 
+# ##### Elevation
+# deriving elevation from previous DEM
+elevation = dem.select('elevation').clip(aoi)
+
+# visual parameters for the elevation imagery
+elevation_params = {
+  'min' : 0,
+  'max' : 905,
+  'palette' : ['#440044', '#FF00FF', '#00FFFF'] # color palette for drawing the elevation model on the map
+}
+
+# ##### Slopes (30m resolution)
+# deriving slopes from previous DEM through Elevation
+slopes = ee.Terrain.slope(elevation).clip(aoi)
+
+# visual parameters for the slopes imagery
+slopes_param = {
+  'min' : 0,
+  'max' : 90,
+  'palette' : ['#830cab','#7556f3','#5590e7','#3bbcac','#52d965','#86ea50','#ccec5a']  # color palette for drawing the layer based on slope angle on the map
+}
 
 ###########################################################
 #################### MAIN PROJECT MAP ####################
@@ -478,8 +499,15 @@ m.add_child(WATERWAYS_INFO)
 # adding main satellite image as layer
 m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
 
+# ##### SRTM elevation & slopes
+# adding DEM layer
+#m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
+
 # adding SRTM elevation layer
-m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
+m.add_ee_layer(elevation, elevation_params, 'Elevation')
+
+# adding slopes layer
+m.add_ee_layer(slopes, slopes_param, 'Slopes')
 
 
 #################### Layer controller ####################
