@@ -1,5 +1,4 @@
 # importing all project related libraries
-from attr import attr
 import ee
 from ee import image
 import folium
@@ -13,12 +12,13 @@ import webbrowser
 ################### NEXT TASKS
 # Imagery analysis with earth-engine api
 
-#################### Methods and Functions Configuration #################### 
+#################### EarthEngine Configuration #################### 
 # ########## EarthEngine Setup
 # Triggering authentification to earthengine services
+# Uncomment then execute only once > auth succecfull > put back as a comment:
 #ee.Authenticate()
 
-# initializing the library
+# initializing the earth engine library
 ee.Initialize()
 
 # ##### earth-engine drawing method setup
@@ -32,20 +32,22 @@ def add_ee_layer(self, ee_image_object, vis_params, name):
       control = True
   ).add_to(self)
 
-# configuring earth engine display rendering method to folium
+# configuring earth engine display rendering method in folium
 folium.Map.add_ee_layer = add_ee_layer
 
-#################### testing earthengine-api ####################
-# creating delimitation area of interest/study of the project
+#################### IMAGERY ANALYSIS ####################
+
+# creating delimitation Area Of Interest/Study of the project (AOI/AOS)
 aoi = ee.Geometry.Rectangle([[2.4125581916503958, 36.49689168784115], [2.1626192268066458, 36.653497195420755]])
 
-# passing a Sentinel-2 imagery
+# Passing main Sentinel-2 imagery ID: image1 (date: 2021-10-21)
 image = ee.Image('COPERNICUS/S2_SR/20211019T104051_20211019T104645_T31SDA')
 
+# ########## Visual Displays
 # clipping the image to study area borders
 image_satellite = image.clip(aoi).divide(10000)
 
-#visual parameters for natural colors
+# visual parameters for the satellite imagery natural colors display
 image_params = {
   'bands': ['B4',  'B3',  'B2'],
   'min': 0,
@@ -53,9 +55,22 @@ image_params = {
   'gamma': 2
 }
 
+#################### Custom Visual Displays ####################
 
-#############################################################
+# ########## Elevation
 
+# ##### NASA DEM (Digital Elevation Model) collection: 30m resolution
+dem = ee.Image('CGIAR/SRTM90_V4').clip(aoi)
+
+# visual parameters for the DEM imagery
+dem_params = {
+  'min': 0,
+  'max': 905
+}
+
+
+###########################################################
+#################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
 m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
 
@@ -458,9 +473,13 @@ WATERWAYS_INFO = folium.features.GeoJson(
 m.add_child(WATERWAYS_INFO)
 
 ############################################################
+#################### COMPUTED RASTER LAYERS ####################
 
-# testing main satellite image as layer
+# adding main satellite image as layer
 m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
+
+# adding SRTM elevation layer
+m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
 
 
 #################### Layer controller ####################
