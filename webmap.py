@@ -84,20 +84,20 @@ elevation_params = {
 slopes = ee.Terrain.slope(elevation).clip(aoi)
 
 # visual parameters for the slopes imagery
-slopes_param = {
+slopes_params = {
   'min' : 0,
   'max' : 90,
   'palette' : ['#830cab','#7556f3','#5590e7','#3bbcac','#52d965','#86ea50','#ccec5a']  # color palette for drawing the layer based on slope angle on the map
 }
 
 ####################  INDECES #################### 
-# ########## NDVI (Normalized Difference Vegetation Index)
+# ##### NDVI (Normalized Difference Vegetation Index)
 # defining NDVI compue function that normalizes the differences between two bands
 def getNDVI(image):
   return image.normalizedDifference(['B8', 'B4'])
 
 # clipping to AOI
-ndvi1 = getNDVI(image.clip(aoi))
+ndvi = getNDVI(image.clip(aoi))
 
 # NDVI visual parameters:
 # Generating a color palette as visual parameter for NDVI display:
@@ -106,6 +106,45 @@ ndvi_params = {
   'min': 0,
   'max': 1,
   'palette': ['#ffffe5', '#f7fcb9', '#78c679', '#41ab5d', '#238443', '#005a32']
+}
+
+# ##### NDWI (Normalized Difference Water Index)
+def getNDWI(image):
+  return image.normalizedDifference(['B3', 'B11'])
+
+ndwi = getNDWI(image.clip(aoi))
+
+# NDWI visual parameters: (shallow water to deep water)
+ndwi_params = {
+    'min': 0,
+    'max': 1,
+    'palette': ['#00FFFF', '#0000FF']
+}
+
+# ########## IMAGES MASKS
+# Mask the non-watery parts of the image, where NDVI ratio value > 0.0
+ndvi_masked = ndvi.updateMask(ndvi.gte(0))
+
+# NDWI Masking: NDWI > 0.1
+ndwi_masked = ndwi.updateMask(ndwi.gte(0.1))
+
+# ########## ANALYSIS RESULTS CLASSIFICATION
+# ##### NDVI classification: 7 classes
+ndvi_classified = ee.Image(ndvi_masked) \
+  .where(ndvi.gte(0).And(ndvi.lte(0.15)), 2) \
+  .where(ndvi.gte(0.15).And(ndvi.lte(0.25)), 3) \
+  .where(ndvi.gte(0.25).And(ndvi.lte(0.35)), 4) \
+  .where(ndvi.gte(0.35).And(ndvi.lte(0.45)), 5) \
+  .where(ndvi.gte(0.45).And(ndvi.lte(0.65)), 6) \
+  .where(ndvi.gte(0.65).And(ndvi.lte(0.75)), 7) \
+  .where(ndvi.gte(0.75), 8) \
+
+# Classified NDVI visual parameters
+ndvi_classified_params = {
+  'min': 1,
+  'max': 7,
+  'palette': ['#a50026', '#ed5e3d', '#f9f7ae', '#fec978', '#9ed569', '#229b51', '#006837'] 
+  # each color corresponds to an NDVI class.
 }
 
 ###########################################################
@@ -525,10 +564,16 @@ m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
 m.add_ee_layer(elevation, elevation_params, 'Elevation')
 
 # adding slopes layer
-m.add_ee_layer(slopes, slopes_param, 'Slopes')
+m.add_ee_layer(slopes, slopes_params, 'Slopes')
 
-# adding NDVI layers to the map
-m.add_ee_layer(ndvi1, ndvi_params, 'NDVI')
+# adding NDVI layer to the map
+m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
+
+# adding Classified NDVI layer to the map
+m.add_ee_layer(ndvi_classified, ndvi_classified_params, 'NDVI - Classified')
+
+# adding NDWI layer to the map
+m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
 
 #################### Layer controller ####################
 
