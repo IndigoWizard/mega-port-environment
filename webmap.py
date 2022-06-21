@@ -1,4 +1,6 @@
 # importing all project related libraries
+import ee
+from ee import image
 import folium
 from folium import features
 from folium.plugins import MiniMap
@@ -10,6 +12,143 @@ import webbrowser
 ################### NEXT TASKS
 # Imagery analysis with earth-engine api
 
+#################### EarthEngine Configuration #################### 
+# ########## EarthEngine Setup
+# Triggering authentification to earthengine services
+# Uncomment then execute only once > auth succecfull > put back as a comment:
+#ee.Authenticate()
+
+# initializing the earth engine library
+ee.Initialize()
+
+# ##### earth-engine drawing method setup
+def add_ee_layer(self, ee_image_object, vis_params, name):
+  map_id_dict = ee.Image(ee_image_object).getMapId(vis_params)
+  folium.raster_layers.TileLayer(
+      tiles = map_id_dict['tile_fetcher'].url_format,
+      attr = 'Map Data &copy; <a href="https://earthengine.google.com/">Google Earth Engine</a>',
+      name = name,
+      overlay = True,
+      control = True
+  ).add_to(self)
+
+# configuring earth engine display rendering method in folium
+folium.Map.add_ee_layer = add_ee_layer
+
+#################### IMAGERY ANALYSIS ####################
+
+# creating delimitation Area Of Interest/Study of the project (AOI/AOS)
+aoi = ee.Geometry.Rectangle([[2.4125581916503958, 36.49689168784115], [2.1626192268066458, 36.653497195420755]])
+
+# Passing main Sentinel-2 imagery ID: image1 (date: 2021-10-21)
+image = ee.Image('COPERNICUS/S2_SR/20211019T104051_20211019T104645_T31SDA')
+
+# ########## Visual Displays
+# clipping the image to study area borders
+image_satellite = image.clip(aoi).divide(10000)
+
+# visual parameters for the satellite imagery natural colors display
+image_params = {
+  'bands': ['B4',  'B3',  'B2'],
+  'min': 0,
+  'max': 1,
+  'gamma': 2
+}
+
+#################### Custom Visual Displays ####################
+
+# ########## Elevation
+
+# ##### NASA DEM (Digital Elevation Model) collection: 30m resolution
+dem = ee.Image('CGIAR/SRTM90_V4').clip(aoi)
+
+# visual parameters for the DEM imagery
+dem_params = {
+  'min': 0,
+  'max': 905
+}
+
+# ##### Elevation
+# deriving elevation from previous DEM
+elevation = dem.select('elevation').clip(aoi)
+
+# visual parameters for the elevation imagery
+elevation_params = {
+  'min' : 0,
+  'max' : 905,
+  'palette' : ['#440044', '#FF00FF', '#00FFFF'] # color palette for drawing the elevation model on the map
+}
+
+# ##### Slopes (30m resolution)
+# deriving slopes from previous DEM through Elevation
+slopes = ee.Terrain.slope(elevation).clip(aoi)
+
+# visual parameters for the slopes imagery
+slopes_params = {
+  'min' : 0,
+  'max' : 90,
+  'palette' : ['#830cab','#7556f3','#5590e7','#3bbcac','#52d965','#86ea50','#ccec5a']  # color palette for drawing the layer based on slope angle on the map
+}
+
+####################  INDECES #################### 
+# ##### NDVI (Normalized Difference Vegetation Index)
+# defining NDVI compue function that normalizes the differences between two bands
+def getNDVI(image):
+  return image.normalizedDifference(['B8', 'B4'])
+
+# clipping to AOI
+ndvi = getNDVI(image.clip(aoi))
+
+# NDVI visual parameters:
+# Generating a color palette as visual parameter for NDVI display:
+# White/Light Green to Dark Green : No vegetation to High/Healthy vegetation
+ndvi_params = {
+  'min': 0,
+  'max': 1,
+  'palette': ['#ffffe5', '#f7fcb9', '#78c679', '#41ab5d', '#238443', '#005a32']
+}
+
+# ##### NDWI (Normalized Difference Water Index)
+def getNDWI(image):
+  return image.normalizedDifference(['B3', 'B11'])
+
+ndwi = getNDWI(image.clip(aoi))
+
+# NDWI visual parameters: (shallow water to deep water)
+ndwi_params = {
+    'min': 0,
+    'max': 1,
+    'palette': ['#00FFFF', '#0000FF']
+}
+
+# ########## IMAGES MASKS
+# Mask the non-watery parts of the image, where NDVI ratio value > 0.0
+ndvi_masked = ndvi.updateMask(ndvi.gte(0))
+
+# NDWI Masking: NDWI > 0.1
+ndwi_masked = ndwi.updateMask(ndwi.gte(0.1))
+
+# ########## ANALYSIS RESULTS CLASSIFICATION
+# ##### NDVI classification: 7 classes
+ndvi_classified = ee.Image(ndvi_masked) \
+  .where(ndvi.gte(0).And(ndvi.lte(0.15)), 2) \
+  .where(ndvi.gte(0.15).And(ndvi.lte(0.25)), 3) \
+  .where(ndvi.gte(0.25).And(ndvi.lte(0.35)), 4) \
+  .where(ndvi.gte(0.35).And(ndvi.lte(0.45)), 5) \
+  .where(ndvi.gte(0.45).And(ndvi.lte(0.65)), 6) \
+  .where(ndvi.gte(0.65).And(ndvi.lte(0.75)), 7) \
+  .where(ndvi.gte(0.75), 8) \
+
+# Classified NDVI visual parameters
+ndvi_classified_params = {
+  'min': 1,
+  'max': 7,
+  'palette': ['#a50026', '#ed5e3d', '#f9f7ae', '#fec978', '#9ed569', '#229b51', '#006837'] 
+  # each color corresponds to an NDVI class.
+}
+
+###########################################################
+#################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
 m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
 
@@ -411,10 +550,34 @@ WATERWAYS_INFO = folium.features.GeoJson(
 )
 m.add_child(WATERWAYS_INFO)
 
+############################################################
+#################### COMPUTED RASTER LAYERS ####################
+
+# adding main satellite image as layer
+m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
+
+# ##### SRTM elevation & slopes
+# adding DEM layer
+#m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
+
+# adding SRTM elevation layer
+m.add_ee_layer(elevation, elevation_params, 'Elevation')
+
+# adding slopes layer
+m.add_ee_layer(slopes, slopes_params, 'Slopes')
+
+# adding NDVI layer to the map
+m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
+
+# adding Classified NDVI layer to the map
+m.add_ee_layer(ndvi_classified, ndvi_classified_params, 'NDVI - Classified')
+
+# adding NDWI layer to the map
+m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
 
 #################### Layer controller ####################
 
-folium.LayerControl(collapsed=False).add_to(m)
+folium.LayerControl(collapsed=True).add_to(m)
 
 #################### Creating the map file #################### 
 
