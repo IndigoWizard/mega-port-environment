@@ -110,7 +110,7 @@ ndvi_params = {
 
 # ##### NDWI (Normalized Difference Water Index)
 def getNDWI(image):
-  return image.normalizedDifference(['B8', 'B4'])
+  return image.normalizedDifference(['B3', 'B11'])
 
 ndwi = getNDWI(image.clip(aoi))
 
@@ -120,6 +120,15 @@ ndwi_params = {
     'max': 1,
     'palette': ['#00FFFF', '#0000FF']
 }
+
+
+# ########## IMAGES MASKS
+# Mask the non-watery parts of the image, where NDVI ratio value > 0.0
+ndvi_masked = ndvi.updateMask(ndvi.gte(0))
+
+# NDWI Masking: NDWI > 0.1
+ndwi_masked = ndwi.updateMask(ndwi.gte(0.1))
+
 
 ###########################################################
 #################### MAIN PROJECT MAP ####################
@@ -541,10 +550,10 @@ m.add_ee_layer(elevation, elevation_params, 'Elevation')
 m.add_ee_layer(slopes, slopes_param, 'Slopes')
 
 # adding NDVI layer to the map
-m.add_ee_layer(ndvi, ndvi_params, 'NDVI')
+m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
 
 # adding NDWI layer to the map
-m.add_ee_layer(ndwi, ndwi_params, 'NDWI')
+m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
 
 #################### Layer controller ####################
 
