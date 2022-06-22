@@ -4,8 +4,8 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#ff8040",
-        "stroke-width": 5,
+        "stroke": "#1d2ec4",
+        "stroke-width": 6,
         "stroke-opacity": 1,
         "dashArray-highlight": "1, 1",
         "dashArray": "1, 1",

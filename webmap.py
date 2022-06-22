@@ -9,12 +9,9 @@ import geojson
 import os
 import webbrowser
 
-################### NEXT TASKS
-# Imagery analysis with earth-engine api
-
-#################### EarthEngine Configuration #################### 
-# ########## EarthEngine Setup
-# Triggering authentification to earthengine services
+#################### Earth Engine Configuration #################### 
+# ########## Earth Engine Setup
+# Triggering authentification to earth engine services
 # Uncomment then execute only once > auth succecfull > put back as a comment:
 #ee.Authenticate()
 
@@ -38,7 +35,9 @@ folium.Map.add_ee_layer = add_ee_layer
 #################### IMAGERY ANALYSIS ####################
 
 # creating delimitation Area Of Interest/Study of the project (AOI/AOS)
-aoi = ee.Geometry.Rectangle([[2.4125581916503958, 36.49689168784115], [2.1626192268066458, 36.653497195420755]])
+#aoi = ee.Geometry.Rectangle([[2.4125581916503958, 36.49689168784115], [2.1626192268066458, 36.653497195420755]])
+# Buffer/Circular AOI
+aoi = ee.Geometry.Point([2.310362, 36.577489]).buffer(10500)
 
 # Passing main Sentinel-2 imagery ID: image1 (date: 2021-10-21)
 image = ee.Image('COPERNICUS/S2_SR/20211019T104051_20211019T104645_T31SDA')
@@ -150,13 +149,13 @@ ndvi_classified_params = {
 ###########################################################
 #################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
-m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
+m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 14, control_scale = True)
 
 # setting up a minimap for general orientation when on zoom
 miniMap = MiniMap(
   toggle_display = True,
-  zoom_level_offset = -7,
-  tile_layer='Stamen Terrain',
+  zoom_level_offset = -5,
+  tile_layer='cartodbdark_matter',
   width=140,
   height=100
 ).add_to(m)
@@ -175,23 +174,34 @@ basemap2 = folium.TileLayer('cartodbdark_matter', name='Dark Matter')
 basemap2.add_to(m)
 
 # ########## Secondary basemaps (raster data):
-# ##### ESRI sattelite imagery service
+# ##### CyclOSM
 basemap3 = (
-    'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery' + '/MapServer/tile/{z}/{y}/{x}'
+  'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png'
 )
 WmsTileLayer(
   url=basemap3,
+  layers=None,
+  name='Topography Map',
+  attr='Topography Map'
+).add_to(m)
+
+# ##### ESRI sattelite imagery service
+basemap4 = (
+    'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery' + '/MapServer/tile/{z}/{y}/{x}'
+)
+WmsTileLayer(
+  url=basemap4,
   layers=None,
   name='ESRI Sattelite Imagery',
   attr='ESRI World Imagery'
 ).add_to(m)
 
 # ##### Google sattelite imagery service
-basemap4 = (
+basemap5 = (
     'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
 )
 WmsTileLayer(
-  url=basemap4,
+  url=basemap5,
   layers=None,
   name='Google Sattelite Imagery',
   attr='Google'
@@ -372,9 +382,9 @@ CONSTRUCTION_ZONES_INFO = folium.features.GeoJson(
   style_function = construction_zones_style_function, 
   highlight_function = construction_zones_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    fields=['zone-designation', 'name'],
-    aliases=['Zone designation: ', 'Name: '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
+    fields=['name', 'zone-designation', 'area'],
+    aliases=['Name: ', 'Zone designation: ', 'Area: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;")
   )
 )
 m.add_child(CONSTRUCTION_ZONES_INFO)
@@ -446,8 +456,8 @@ FORESTS_AFFECTED_INFO = folium.features.GeoJson(
   style_function = forests_az_style_function, 
   highlight_function = forests_az_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    fields=['name', 'section', 'ilot', 'area'],
-    aliases=['Name: ', 'Section: ', 'Ilot: ', 'Superficie Touchee (Ha): '],
+    fields=['name', 'type', 'status', 'section', 'ilot', 'area'],
+    aliases=['Name: ', 'Type: ', 'Project status: ', 'Section: ', 'Ilot: ', 'Superficie Touchee (Ha): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
@@ -479,8 +489,8 @@ FORESTS_PRESERVED_INFO = folium.features.GeoJson(
   style_function = forests_pz_style_function, 
   highlight_function = forests_pz_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    fields=['name', 'area'],
-    aliases=['Name: ', 'Superficie (Ha): '],
+    fields=['name', 'type', 'status', 'area'],
+    aliases=['Name: ', 'Type: ', 'Project status: ', 'Superficie (Ha): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
@@ -512,8 +522,8 @@ AGRO_FARM_LAND_INFO = folium.features.GeoJson(
   style_function = agro_farm_land_style_function, 
   highlight_function = agro_farm_land_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    fields=['designation'],
-    aliases=['Land designation: '],
+    fields=['designation', 'status'],
+    aliases=['Land designation: ', 'Project status: '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
