@@ -627,29 +627,28 @@ template = """
 style='position: absolute;
 z-index:9999;
 border:2px solid grey;
-background-color:rgba(255, 255, 255, 0.8);
+background-color:rgba(207, 232, 255, 0.6);
 border-radius:6px;
 padding: 10px;
 font-size:14px;
 left: 5px;
 bottom: 45px;'>
-
 <div class='legend-title'>Legend (Vector layers only)</div>
 <div class='legend-scale'>
   <ul class='legend-labels'>
     <li><span style='background:#9e57b0;opacity:0.8;'></span>Logistic industrial zones.</li>
-    <li><span style='background:#0000ff;opacity:0.8;'></span>Construction sites.</li>
-    <li><span style='background:#9e57b0;opacity:0.8;'></span>Port main infrastructure.</li>
-    <li><span style='background:#53548e;opacity:0.8;'></span>Roads.</li>
+    <li><span style='background:#0000ff;opacity:0.8;border: 4px #1a9a00 dotted;'></span>Construction sites.</li>
+    <li><span style='background:#740118;opacity:0.8;'></span>Port main infrastructure.</li>
+    <li><span style='border:3px dashed #1d1f2b;height:0;opacity:0.8;'></span>Roads.</li>
     <li><span style='background:#145B27;opacity:0.8;'></span>Forests - Affected Zones.</li>
     <li><span style='background:#0b8a03;opacity:0.8;'></span>Forests - Preserved Natural Zones.</li>
-    <li><span style='background:#607254;opacity:0.8;'></span>Farms and Aggricultural lands.</li>
+    <li><span style='background:#00c632;opacity:0.8;'></span>Farms and Aggricultural lands.</li>
     <li><span style='background:#0070ec;opacity:0.8;'></span>Shoreline.</li>
     <li><span style='background:#75cff0;opacity:0.8;'></span>Waterways.</li>
   </ul>
 </div>
 </div>
- 
+
 </body>
 </html>
 
@@ -681,7 +680,7 @@ bottom: 45px;'>
     width: 30px;
     margin-right: 5px;
     margin-left: 0;
-    border: 1px solid #999;
+    border: 1px solid #cfe8ff99;
     }
   .maplegend .legend-source {
     font-size: 80%;
