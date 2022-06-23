@@ -5,6 +5,7 @@ import folium
 from folium import features
 from folium.plugins import MiniMap
 from folium import WmsTileLayer
+from branca.element import Template, MacroElement
 import geojson
 import os
 import webbrowser
@@ -173,39 +174,39 @@ basemap1.add_to(m)
 basemap2 = folium.TileLayer('cartodbdark_matter', name='Dark Matter')
 basemap2.add_to(m)
 
-# ########## Secondary basemaps (raster data):
-# ##### CyclOSM
-basemap3 = (
-  'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png'
-)
-WmsTileLayer(
-  url=basemap3,
-  layers=None,
-  name='Topography Map',
-  attr='Topography Map'
-).add_to(m)
+# # ########## Secondary basemaps (raster data):
+# # ##### CyclOSM
+# basemap3 = (
+#   'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png'
+# )
+# WmsTileLayer(
+#   url=basemap3,
+#   layers=None,
+#   name='Topography Map',
+#   attr='Topography Map'
+# ).add_to(m)
 
-# ##### ESRI sattelite imagery service
-basemap4 = (
-    'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery' + '/MapServer/tile/{z}/{y}/{x}'
-)
-WmsTileLayer(
-  url=basemap4,
-  layers=None,
-  name='ESRI Sattelite Imagery',
-  attr='ESRI World Imagery'
-).add_to(m)
+# # ##### ESRI sattelite imagery service
+# basemap4 = (
+#     'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery' + '/MapServer/tile/{z}/{y}/{x}'
+# )
+# WmsTileLayer(
+#   url=basemap4,
+#   layers=None,
+#   name='ESRI Sattelite Imagery',
+#   attr='ESRI World Imagery'
+# ).add_to(m)
 
-# ##### Google sattelite imagery service
-basemap5 = (
-    'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
-)
-WmsTileLayer(
-  url=basemap5,
-  layers=None,
-  name='Google Sattelite Imagery',
-  attr='Google'
-).add_to(m)
+# # ##### Google sattelite imagery service
+# basemap5 = (
+#     'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
+# )
+# WmsTileLayer(
+#   url=basemap5,
+#   layers=None,
+#   name='Google Sattelite Imagery',
+#   attr='Google'
+# ).add_to(m)
 
 #################### SPATIAL FEATURES LAYERS ####################
 #################### DATA ####################
@@ -563,31 +564,140 @@ m.add_child(WATERWAYS_INFO)
 ############################################################
 #################### COMPUTED RASTER LAYERS ####################
 
-# adding main satellite image as layer
-m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
+# # adding main satellite image as layer
+# m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
 
-# ##### SRTM elevation & slopes
-# adding DEM layer
-#m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
+# # ##### SRTM elevation & slopes
+# # adding DEM layer
+# #m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
 
-# adding SRTM elevation layer
-m.add_ee_layer(elevation, elevation_params, 'Elevation')
+# # adding SRTM elevation layer
+# m.add_ee_layer(elevation, elevation_params, 'Elevation')
 
-# adding slopes layer
-m.add_ee_layer(slopes, slopes_params, 'Slopes')
+# # adding slopes layer
+# m.add_ee_layer(slopes, slopes_params, 'Slopes')
 
-# adding NDVI layer to the map
-m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
+# # adding NDVI layer to the map
+# m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
 
-# adding Classified NDVI layer to the map
-m.add_ee_layer(ndvi_classified, ndvi_classified_params, 'NDVI - Classified')
+# # adding Classified NDVI layer to the map
+# m.add_ee_layer(ndvi_classified, ndvi_classified_params, 'NDVI - Classified')
 
-# adding NDWI layer to the map
-m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
+# # adding NDWI layer to the map
+# m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
 
 #################### Layer controller ####################
 
 folium.LayerControl(collapsed=True).add_to(m)
+
+#################### MAP LEGEND ####################
+
+template = """
+{% macro html(this, kwargs) %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  
+  <script>
+  $( function() {
+    $( "#maplegend" ).draggable({
+      start: function (event, ui) {
+        $(this).css({
+          right: "auto",
+          top: "auto",
+          bottom: "auto"
+        });
+      }
+    });
+  });
+  </script>
+
+</head>
+<body>
+
+
+<div id='maplegend' class='maplegend'
+style='position: absolute;
+z-index:9999;
+border:2px solid grey;
+background-color:rgba(255, 255, 255, 0.8);
+border-radius:6px;
+padding: 10px;
+font-size:14px;
+left: 5px;
+bottom: 45px;'>
+
+<div class='legend-title'>Legend (Vector layers only)</div>
+<div class='legend-scale'>
+  <ul class='legend-labels'>
+    <li><span style='background:#9e57b0;opacity:0.8;'></span>Logistic industrial zones.</li>
+    <li><span style='background:#0000ff;opacity:0.8;'></span>Construction sites.</li>
+    <li><span style='background:#9e57b0;opacity:0.8;'></span>Port main infrastructure.</li>
+    <li><span style='background:#53548e;opacity:0.8;'></span>Roads.</li>
+    <li><span style='background:#145B27;opacity:0.8;'></span>Forests - Affected Zones.</li>
+    <li><span style='background:#0b8a03;opacity:0.8;'></span>Forests - Preserved Natural Zones.</li>
+    <li><span style='background:#607254;opacity:0.8;'></span>Farms and Aggricultural lands.</li>
+    <li><span style='background:#0070ec;opacity:0.8;'></span>Shoreline.</li>
+    <li><span style='background:#75cff0;opacity:0.8;'></span>Waterways.</li>
+  </ul>
+</div>
+</div>
+ 
+</body>
+</html>
+
+<style type='text/css'>
+  .maplegend .legend-title {
+    text-align: left;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 90%;
+    }
+  .maplegend .legend-scale ul {
+    margin: 0;
+    margin-bottom: 5px;
+    padding: 0;
+    float: left;
+    list-style: none;
+    }
+  .maplegend .legend-scale ul li {
+    font-size: 80%;
+    list-style: none;
+    margin-left: 0;
+    line-height: 18px;
+    margin-bottom: 2px;
+    }
+  .maplegend ul.legend-labels li span {
+    display: block;
+    float: left;
+    height: 16px;
+    width: 30px;
+    margin-right: 5px;
+    margin-left: 0;
+    border: 1px solid #999;
+    }
+  .maplegend .legend-source {
+    font-size: 80%;
+    color: #777;
+    clear: both;
+    }
+  .maplegend a {
+    color: #777;
+    }
+</style>
+{% endmacro %}
+"""
+
+legend = MacroElement()
+legend._template = Template(template)
+m.get_root().add_child(legend)
 
 #################### Creating the map file #################### 
 
