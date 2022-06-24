@@ -475,7 +475,7 @@ forests_pz_style_function = lambda x: {
 }
 
 forests_pz_highlight_function = lambda x: {
-  'fillColor': '#0b8a03', 
+  'fillColor': '#0b8a03',
   'color':'#0b8a03', 
   'fillOpacity': 0.80,
   'opacity' : 0.50,
@@ -639,7 +639,8 @@ bottom: 45px;'>
     <li><span style='background:#9e57b0;opacity:0.8;'></span>Logistic industrial zones.</li>
     <li><span style='background:#0000ff;opacity:0.8;border: 4px #1a9a00 dotted;'></span>Construction sites.</li>
     <li><span style='background:#740118;opacity:0.8;'></span>Port main infrastructure.</li>
-    <li><span style='border:3px dashed #1d1f2b;height:0;opacity:0.8;'></span>Roads.</li>
+    <li><span style="border:3px dashed #1d1f2b;height:0;opacity:0.8;margin-top: 8px;"></span>Roads.</li>
+    <li><span style="border:3px dashed #ff0;height:0;opacity:0.8;background: #b8cee299;margin-top: 8px;"></span>Roads - Suggested deviation.</li>
     <li><span style='background:#145B27;opacity:0.8;'></span>Forests - Affected Zones.</li>
     <li><span style='background:#0b8a03;opacity:0.8;'></span>Forests - Preserved Natural Zones.</li>
     <li><span style='background:#00c632;opacity:0.8;'></span>Farms and Aggricultural lands.</li>
