@@ -150,7 +150,7 @@ ndvi_classified_params = {
 ###########################################################
 #################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
-m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 14, control_scale = True)
+m = folium.Map(location = [36.6193, 2.2450], tiles='OpenStreetMap', zoom_start = 14, control_scale = True)
 
 # setting up a minimap for general orientation when on zoom
 miniMap = MiniMap(
@@ -175,38 +175,38 @@ basemap2 = folium.TileLayer('cartodbdark_matter', name='Dark Matter')
 basemap2.add_to(m)
 
 # # ########## Secondary basemaps (raster data):
-# # ##### CyclOSM
-# basemap3 = (
-#   'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png'
-# )
-# WmsTileLayer(
-#   url=basemap3,
-#   layers=None,
-#   name='Topography Map',
-#   attr='Topography Map'
-# ).add_to(m)
+# ##### CyclOSM
+basemap3 = (
+  'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png'
+)
+WmsTileLayer(
+  url=basemap3,
+  layers=None,
+  name='Topography Map',
+  attr='Topography Map'
+).add_to(m)
 
-# # ##### ESRI sattelite imagery service
-# basemap4 = (
-#     'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery' + '/MapServer/tile/{z}/{y}/{x}'
-# )
-# WmsTileLayer(
-#   url=basemap4,
-#   layers=None,
-#   name='ESRI Sattelite Imagery',
-#   attr='ESRI World Imagery'
-# ).add_to(m)
+# ##### ESRI sattelite imagery service
+basemap4 = (
+    'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery' + '/MapServer/tile/{z}/{y}/{x}'
+)
+WmsTileLayer(
+  url=basemap4,
+  layers=None,
+  name='ESRI Sattelite Imagery',
+  attr='ESRI World Imagery'
+).add_to(m)
 
-# # ##### Google sattelite imagery service
-# basemap5 = (
-#     'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
-# )
-# WmsTileLayer(
-#   url=basemap5,
-#   layers=None,
-#   name='Google Sattelite Imagery',
-#   attr='Google'
-# ).add_to(m)
+# ##### Google sattelite imagery service
+basemap5 = (
+    'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
+)
+WmsTileLayer(
+  url=basemap5,
+  layers=None,
+  name='Google Sattelite Imagery',
+  attr='Google'
+).add_to(m)
 
 #################### SPATIAL FEATURES LAYERS ####################
 #################### DATA ####################
@@ -564,139 +564,162 @@ m.add_child(WATERWAYS_INFO)
 ############################################################
 #################### COMPUTED RASTER LAYERS ####################
 
-# # adding main satellite image as layer
-# m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
+# adding main satellite image as layer
+m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
 
-# # ##### SRTM elevation & slopes
-# # adding DEM layer
-# #m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
+# ##### SRTM elevation & slopes
+# adding DEM layer
+#m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
 
-# # adding SRTM elevation layer
-# m.add_ee_layer(elevation, elevation_params, 'Elevation')
+# adding SRTM elevation layer
+m.add_ee_layer(elevation, elevation_params, 'Elevation')
 
-# # adding slopes layer
-# m.add_ee_layer(slopes, slopes_params, 'Slopes')
+# adding slopes layer
+m.add_ee_layer(slopes, slopes_params, 'Slopes')
 
-# # adding NDVI layer to the map
-# m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
+# adding NDVI layer to the map
+m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
 
-# # adding Classified NDVI layer to the map
-# m.add_ee_layer(ndvi_classified, ndvi_classified_params, 'NDVI - Classified')
+# adding Classified NDVI layer to the map
+m.add_ee_layer(ndvi_classified, ndvi_classified_params, 'NDVI - Classified')
 
-# # adding NDWI layer to the map
-# m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
+# adding NDWI layer to the map
+m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
 
 #################### Layer controller ####################
 
 folium.LayerControl(collapsed=True).add_to(m)
 
 #################### MAP LEGEND ####################
+#<link rel="stylesheet" href="style.css">
 
-template = """
+legend_setup = """
 {% macro html(this, kwargs) %}
 
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>PORT CENTRE DE CHERCHELL - IMAGERY ANALYSIS</title>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="src/legend.css">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  
-  <script>
-  $( function() {
-    $( "#maplegend" ).draggable({
-      start: function (event, ui) {
-        $(this).css({
-          right: "auto",
-          top: "auto",
-          bottom: "auto"
-        });
-      }
-    });
-  });
-  </script>
+        <script>
+            $(function() {
+                $("#maplegend").draggable({
+                    start: function(event, ui) {
+                        $(this).css({
+                            right: "auto",
+                            top: "auto",
+                            bottom: "auto"
+                        });
+                    }
+                });
+            });
+        </script>
+    </head>
 
-</head>
-<body>
+  <body>
+    <div id='maplegend'class='maplegend' style='position: absolute; z-index:9999; border:2px solid grey; background-color:rgba(207, 232, 255, 0.6); border-radius:6px; padding: 10px; font-size:14px; left: 5px; bottom: 45px;'>
+      <div class='legend-title'>Legend</div>
+      
+      <div class="index-container">
 
+        <div class='legend-scale' id="VECTOR">
+          <ul class='legend-labels'>
+            <li><span style='background:#9e57b0;opacity:0.8;'></span>Logistic industrial zones.</li>
+            <li><span style='background:#0000ff;opacity:0.8;border: 4px #1a9a00 dotted;'></span>Construction sites.</li>
+            <li><span style='background:#740118;opacity:0.8;'></span>Port main infrastructure.</li>
+            <li><span style="border:3px dashed #1d1f2b;height:0;opacity:0.8;margin-top: 8px;"></span>Port futur highway.</li>
+            <li><span style="border:3px dashed #ff0;height:0;opacity:0.8;background: #b8cee299;margin-top: 8px;"></span>Port futur highway - Suggested deviation.</li>
+            <li><span style='background:#145B27;opacity:0.8;'></span>Forests - Affected Zones.</li>
+            <li><span style='background:#0b8a03;opacity:0.8;'></span>Forests - Preserved Natural Zones.</li>
+            <li><span style='background:#00c632;opacity:0.8;'></span>Farms and Aggricultural lands.</li>
+            <li><span style='background:#0070ec;opacity:0.8;'></span>Shoreline.</li>
+            <li><span style='background:#75cff0;opacity:0.8;'></span>Waterways.</li>
+          </ul>
+        </div>
 
-<div id='maplegend' class='maplegend'
-style='position: absolute;
-z-index:9999;
-border:2px solid grey;
-background-color:rgba(207, 232, 255, 0.6);
-border-radius:6px;
-padding: 10px;
-font-size:14px;
-left: 5px;
-bottom: 45px;'>
-<div class='legend-title'>Legend (Vector layers only)</div>
-<div class='legend-scale'>
-  <ul class='legend-labels'>
-    <li><span style='background:#9e57b0;opacity:0.8;'></span>Logistic industrial zones.</li>
-    <li><span style='background:#0000ff;opacity:0.8;border: 4px #1a9a00 dotted;'></span>Construction sites.</li>
-    <li><span style='background:#740118;opacity:0.8;'></span>Port main infrastructure.</li>
-    <li><span style="border:3px dashed #1d1f2b;height:0;opacity:0.8;margin-top: 8px;"></span>Roads.</li>
-    <li><span style="border:3px dashed #ff0;height:0;opacity:0.8;background: #b8cee299;margin-top: 8px;"></span>Roads - Suggested deviation.</li>
-    <li><span style='background:#145B27;opacity:0.8;'></span>Forests - Affected Zones.</li>
-    <li><span style='background:#0b8a03;opacity:0.8;'></span>Forests - Preserved Natural Zones.</li>
-    <li><span style='background:#00c632;opacity:0.8;'></span>Farms and Aggricultural lands.</li>
-    <li><span style='background:#0070ec;opacity:0.8;'></span>Shoreline.</li>
-    <li><span style='background:#75cff0;opacity:0.8;'></span>Waterways.</li>
-  </ul>
-</div>
-</div>
+        <div class='legend-scale' id="NDVI">
+            <h4>NDVI</h4>
+            <ul class='legend-labels'>
+                <li><span style='background:#ed5e3d;opacity:0.8;'></span>0.0 - 0.1 : Bareland / Settlements</li>
+                <li><span style='background:#fec978;opacity:0.8;'></span>0.1 - 0.25 : Low vegeation</li>
+                <li><span style='background:#f9f7ae;opacity:0.8;'></span>0.25 - 0.35 : Crops</li>
+                <li><span style='background:#9ed569;opacity:0.8;'></span>0.35 - 0.55 : Low vegetation</li>
+                <li><span style='background:#229b51;opacity:0.8;'></span>0.55 - 0.75 : High vegetation</li>
+                <li><span style='background:#006837;opacity:0.8;'></span>> 0.75 : Forest</li>
+            </ul>
+        </div>
 
-</body>
+        <div class="index-gradient">
+
+          <div class="index-gradient-container">
+            <div class='legend-scale' id="NDWI">
+              <h4>NDWI</h4>
+              <div class="inside-container">
+                <div class="gradient-block">
+                  <span id="ndwi-gradient"></span>
+                </div>
+                <div class="gradient-text">
+                  <p>Shallow<br>waters</p>
+                  <p>Deep<br>waters</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="index-gradient-container">
+            <div class='legend-scale' id="DEM">
+              <h4>DEM</h4>
+              <div class="inside-container">
+                <div class="gradient-block">
+                  <span id="dem-gradient"></span>
+                </div>
+                <div class="gradient-text">
+                  <p>1000m</p>
+                  <p>500m</p>
+                  <p>0m</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="index-gradient-container" id="far-right">
+            <div class='legend-scale' id="Slopes">
+              <h4>Slopes</h4>
+              <div class="inside-container">
+                <div class="gradient-block">
+                  <span id="slopes-gradient"></span>
+                </div>
+                <div class="gradient-text">
+                  <p>90°</p>
+                  <p>60°</p>
+                  <p>30°</p>
+                  <p>0°</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </body>
 </html>
-
-<style type='text/css'>
-  .maplegend .legend-title {
-    text-align: left;
-    margin-bottom: 5px;
-    font-weight: bold;
-    font-size: 90%;
-    }
-  .maplegend .legend-scale ul {
-    margin: 0;
-    margin-bottom: 5px;
-    padding: 0;
-    float: left;
-    list-style: none;
-    }
-  .maplegend .legend-scale ul li {
-    font-size: 80%;
-    list-style: none;
-    margin-left: 0;
-    line-height: 18px;
-    margin-bottom: 2px;
-    }
-  .maplegend ul.legend-labels li span {
-    display: block;
-    float: left;
-    height: 16px;
-    width: 30px;
-    margin-right: 5px;
-    margin-left: 0;
-    border: 1px solid #cfe8ff99;
-    }
-  .maplegend .legend-source {
-    font-size: 80%;
-    color: #777;
-    clear: both;
-    }
-  .maplegend a {
-    color: #777;
-    }
-</style>
 {% endmacro %}
 """
-
+# configuring the legend
 legend = MacroElement()
-legend._template = Template(template)
+legend._template = Template(legend_setup)
+
+# adding legend to the map
 m.get_root().add_child(legend)
 
 #################### Creating the map file #################### 
