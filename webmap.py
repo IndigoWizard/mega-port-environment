@@ -169,7 +169,7 @@ m.add_child(miniMap)
 
 # ########## Primary basemaps (victor data):
 basemap1 = folium.TileLayer('stamenterrain', name='Stamen Terrain')
-basemap1.add_to(m)
+# basemap1.add_to(m)
 
 basemap2 = folium.TileLayer('cartodbdark_matter', name='Dark Matter')
 basemap2.add_to(m)
@@ -407,7 +407,7 @@ roads_highlight_function = lambda x: {
 
 ROADS_INFO = folium.features.GeoJson(
   roads,
-  name = 'roads',
+  name = 'Roads - Port access infrastructure',
   control = True,
   style_function = roads_style_function, 
   highlight_function = roads_highlight_function,
@@ -592,10 +592,10 @@ folium.LayerControl(collapsed=True).add_to(m)
 
 #################### MAP LEGEND ####################
 #<link rel="stylesheet" href="style.css">
+#<div class="leaflet-control-layers-separator"></div>
 
 legend_setup = """
 {% macro html(this, kwargs) %}
-
 <!doctype html>
 <html lang="en">
     <head>
@@ -603,13 +603,13 @@ legend_setup = """
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>PORT CENTRE DE CHERCHELL - IMAGERY ANALYSIS</title>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <link rel="stylesheet" href="src/legend.css">
+        <link rel="stylesheet" href="src/ui.css">
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
         <script>
             $(function() {
-                $("#maplegend").draggable({
+                $("#ui-container, #title-container, #project-container").draggable({
                     start: function(event, ui) {
                         $(this).css({
                             right: "auto",
@@ -623,7 +623,32 @@ legend_setup = """
     </head>
 
   <body>
-    <div id='maplegend'class='maplegend' style='position: absolute; z-index:9999; border:2px solid grey; background-color:rgba(207, 232, 255, 0.6); border-radius:6px; padding: 10px; font-size:14px; left: 5px; bottom: 45px;'>
+  <div class="ui-container" id="title-container">
+    <div class="map-title">
+      <p>CHERCHELL CENTER PORT - ENVIRONEMENTAL STUDY</p>
+    </div>
+  </div>
+  
+  <div class="ui-container" id="project-container">
+      <div class="project-source">
+          <div class="project-logo">
+              <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank">
+                <i class="fa fa-github" aria-hidden="true"></i>
+              </a>
+          </div>
+          
+          <div class="project-info">
+            <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank"><p  class="project-link">IndigoWizard/mega-port-environment</p></a>
+            <div class="project-stats">
+              <a href="https://github.com/IndigoWizard/mega-port-environment/releases/tag/0.1.1" target="_blank"><i class="fa fa-tag" aria-hidden="true"> 0.1.1</i></a>
+              <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa fa-star" aria-hidden="true"> Star it!</i></a>
+              <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa fa-code-fork" aria-hidden="true"> Fork it!</i></a>
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <div id="ui-container" class="ui-container">
       <div class='legend-title'>Legend</div>
       
       <div class="index-container">
@@ -709,12 +734,13 @@ legend_setup = """
 
       </div>
 
-    </div>
+  </div>
 
   </body>
 </html>
 {% endmacro %}
 """
+
 # configuring the legend
 legend = MacroElement()
 legend._template = Template(legend_setup)
