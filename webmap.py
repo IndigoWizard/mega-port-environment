@@ -5,6 +5,7 @@ import folium
 from folium import features
 from folium.plugins import MiniMap
 from folium import WmsTileLayer
+from branca.element import Template, MacroElement
 import geojson
 import os
 import webbrowser
@@ -149,7 +150,7 @@ ndvi_classified_params = {
 ###########################################################
 #################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
-m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 14, control_scale = True)
+m = folium.Map(location = [36.6193, 2.2450], tiles='OpenStreetMap', zoom_start = 14, control_scale = True)
 
 # setting up a minimap for general orientation when on zoom
 miniMap = MiniMap(
@@ -168,12 +169,12 @@ m.add_child(miniMap)
 
 # ########## Primary basemaps (victor data):
 basemap1 = folium.TileLayer('stamenterrain', name='Stamen Terrain')
-basemap1.add_to(m)
+# basemap1.add_to(m)
 
 basemap2 = folium.TileLayer('cartodbdark_matter', name='Dark Matter')
 basemap2.add_to(m)
 
-# ########## Secondary basemaps (raster data):
+# # ########## Secondary basemaps (raster data):
 # ##### CyclOSM
 basemap3 = (
   'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png'
@@ -406,7 +407,7 @@ roads_highlight_function = lambda x: {
 
 ROADS_INFO = folium.features.GeoJson(
   roads,
-  name = 'roads',
+  name = 'Roads - Port access infrastructure',
   control = True,
   style_function = roads_style_function, 
   highlight_function = roads_highlight_function,
@@ -474,7 +475,7 @@ forests_pz_style_function = lambda x: {
 }
 
 forests_pz_highlight_function = lambda x: {
-  'fillColor': '#0b8a03', 
+  'fillColor': '#0b8a03',
   'color':'#0b8a03', 
   'fillOpacity': 0.80,
   'opacity' : 0.50,
@@ -588,6 +589,164 @@ m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
 #################### Layer controller ####################
 
 folium.LayerControl(collapsed=True).add_to(m)
+
+#################### MAP LEGEND ####################
+#<link rel="stylesheet" href="style.css">
+#<div class="leaflet-control-layers-separator"></div>
+
+legend_setup = """
+{% macro html(this, kwargs) %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>PORT CENTRE DE CHERCHELL - IMAGERY ANALYSIS</title>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="src/ui.css">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+        <script>
+            $(function() {
+                $("#ui-container, #title-container, #project-container").draggable({
+                    start: function(event, ui) {
+                        $(this).css({
+                            right: "auto",
+                            top: "auto",
+                            bottom: "auto"
+                        });
+                    }
+                });
+            });
+        </script>
+    </head>
+
+  <body>
+  <div class="ui-container" id="title-container">
+    <div class="map-title">
+      <p>CHERCHELL CENTER PORT - ENVIRONEMENTAL STUDY</p>
+    </div>
+  </div>
+  
+  <div class="ui-container" id="project-container">
+      <div class="project-source">
+          <div class="project-logo">
+              <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank">
+                <i class="fa fa-github" aria-hidden="true"></i>
+              </a>
+          </div>
+          
+          <div class="project-info">
+            <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank"><p  class="project-link">IndigoWizard/mega-port-environment</p></a>
+            <div class="project-stats">
+              <a href="https://github.com/IndigoWizard/mega-port-environment/releases/tag/0.1.1" target="_blank"><i class="fa fa-tag" aria-hidden="true"> 0.1.1</i></a>
+              <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa fa-star" aria-hidden="true"> Star it!</i></a>
+              <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa fa-code-fork" aria-hidden="true"> Fork it!</i></a>
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <div id="ui-container" class="ui-container">
+      <div class='legend-title'>Legend</div>
+      
+      <div class="index-container">
+
+        <div class='legend-scale' id="VECTOR">
+          <ul class='legend-labels'>
+            <li><span style='background:#9e57b0;opacity:0.8;'></span>Logistic industrial zones.</li>
+            <li><span style='background:#0000ff;opacity:0.8;border: 4px #1a9a00 dotted;'></span>Construction sites.</li>
+            <li><span style='background:#740118;opacity:0.8;'></span>Port main infrastructure.</li>
+            <li><span style="border:3px dashed #1d1f2b;height:0;opacity:0.8;margin-top: 8px;"></span>Port futur highway.</li>
+            <li><span style="border:3px dashed #ff0;height:0;opacity:0.8;background: #b8cee299;margin-top: 8px;"></span>Port futur highway - Suggested deviation.</li>
+            <li><span style='background:#145B27;opacity:0.8;'></span>Forests - Affected Zones.</li>
+            <li><span style='background:#0b8a03;opacity:0.8;'></span>Forests - Preserved Natural Zones.</li>
+            <li><span style='background:#00c632;opacity:0.8;'></span>Farms and Aggricultural lands.</li>
+            <li><span style='background:#0070ec;opacity:0.8;'></span>Shoreline.</li>
+            <li><span style='background:#75cff0;opacity:0.8;'></span>Waterways.</li>
+          </ul>
+        </div>
+
+        <div class='legend-scale' id="NDVI">
+            <h4>NDVI</h4>
+            <ul class='legend-labels'>
+                <li><span style='background:#ed5e3d;opacity:0.8;'></span>0.0 - 0.1 : Bareland / Settlements</li>
+                <li><span style='background:#fec978;opacity:0.8;'></span>0.1 - 0.25 : Low vegeation</li>
+                <li><span style='background:#f9f7ae;opacity:0.8;'></span>0.25 - 0.35 : Crops</li>
+                <li><span style='background:#9ed569;opacity:0.8;'></span>0.35 - 0.55 : Low vegetation</li>
+                <li><span style='background:#229b51;opacity:0.8;'></span>0.55 - 0.75 : High vegetation</li>
+                <li><span style='background:#006837;opacity:0.8;'></span>> 0.75 : Forest</li>
+            </ul>
+        </div>
+
+        <div class="index-gradient">
+
+          <div class="index-gradient-container">
+            <div class='legend-scale' id="NDWI">
+              <h4>NDWI</h4>
+              <div class="inside-container">
+                <div class="gradient-block">
+                  <span id="ndwi-gradient"></span>
+                </div>
+                <div class="gradient-text">
+                  <p>Shallow<br>waters</p>
+                  <p>Deep<br>waters</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="index-gradient-container">
+            <div class='legend-scale' id="DEM">
+              <h4>DEM</h4>
+              <div class="inside-container">
+                <div class="gradient-block">
+                  <span id="dem-gradient"></span>
+                </div>
+                <div class="gradient-text">
+                  <p>1000m</p>
+                  <p>500m</p>
+                  <p>0m</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="index-gradient-container" id="far-right">
+            <div class='legend-scale' id="Slopes">
+              <h4>Slopes</h4>
+              <div class="inside-container">
+                <div class="gradient-block">
+                  <span id="slopes-gradient"></span>
+                </div>
+                <div class="gradient-text">
+                  <p>90°</p>
+                  <p>60°</p>
+                  <p>30°</p>
+                  <p>0°</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+  </div>
+
+  </body>
+</html>
+{% endmacro %}
+"""
+
+# configuring the legend
+legend = MacroElement()
+legend._template = Template(legend_setup)
+
+# adding legend to the map
+m.get_root().add_child(legend)
 
 #################### Creating the map file #################### 
 

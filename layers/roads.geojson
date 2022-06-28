@@ -4,11 +4,11 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#1d2ec4",
+        "stroke": "#1d1f2b",
         "stroke-width": 6,
         "stroke-opacity": 1,
-        "dashArray-highlight": "1, 1",
-        "dashArray": "1, 1",
+        "dashArray-highlight": "4, 2, 8",
+        "dashArray": "4, 2, 9",
         "Type": "Main road",
         "Name": "Main Highway"
       },
