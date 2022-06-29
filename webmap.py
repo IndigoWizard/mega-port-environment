@@ -1,23 +1,163 @@
 # importing all project related libraries
+import ee
+from ee import image
 import folium
 from folium import features
 from folium.plugins import MiniMap
 from folium import WmsTileLayer
+from branca.element import Template, MacroElement
 import geojson
 import os
 import webbrowser
 
-################### NEXT TASKS
-# Imagery analysis with earth-engine api
+#################### Earth Engine Configuration #################### 
+# ########## Earth Engine Setup
+# Triggering authentification to earth engine services
+# Uncomment then execute only once > auth succecfull > put back as a comment:
 
+#ee.Authenticate()
+
+# initializing the earth engine library
+ee.Initialize()
+
+# ##### earth-engine drawing method setup
+def add_ee_layer(self, ee_image_object, vis_params, name):
+  map_id_dict = ee.Image(ee_image_object).getMapId(vis_params)
+  folium.raster_layers.TileLayer(
+      tiles = map_id_dict['tile_fetcher'].url_format,
+      attr = 'Map Data &copy; <a href="https://earthengine.google.com/">Google Earth Engine</a>',
+      name = name,
+      overlay = True,
+      control = True
+  ).add_to(self)
+
+# configuring earth engine display rendering method in folium
+folium.Map.add_ee_layer = add_ee_layer
+
+#################### IMAGERY ANALYSIS ####################
+
+# creating delimitation Area Of Interest/Study of the project (AOI/AOS)
+#aoi = ee.Geometry.Rectangle([[2.4125581916503958, 36.49689168784115], [2.1626192268066458, 36.653497195420755]])
+# Buffer/Circular AOI
+aoi = ee.Geometry.Point([2.310362, 36.577489]).buffer(10500)
+
+# Passing main Sentinel-2 imagery ID: image1 (date: 2021-10-21)
+image = ee.Image('COPERNICUS/S2_SR/20211019T104051_20211019T104645_T31SDA')
+
+# ########## Visual Displays
+# clipping the image to study area borders
+image_satellite = image.clip(aoi).divide(10000)
+
+# visual parameters for the satellite imagery natural colors display
+image_params = {
+  'bands': ['B4',  'B3',  'B2'],
+  'min': 0,
+  'max': 1,
+  'gamma': 2
+}
+
+#################### Custom Visual Displays ####################
+
+# ########## Elevation
+
+# ##### NASA DEM (Digital Elevation Model) collection: 30m resolution
+dem = ee.Image('CGIAR/SRTM90_V4').clip(aoi)
+
+# visual parameters for the DEM imagery
+dem_params = {
+  'min': 0,
+  'max': 905
+}
+
+# ##### Elevation
+# deriving elevation from previous DEM
+elevation = dem.select('elevation').clip(aoi)
+
+# visual parameters for the elevation imagery
+elevation_params = {
+  'min' : 0,
+  'max' : 905,
+  'palette' : ['#440044', '#FF00FF', '#00FFFF'] # color palette for drawing the elevation model on the map
+}
+
+# ##### Slopes (30m resolution)
+# deriving slopes from previous DEM through Elevation
+slopes = ee.Terrain.slope(elevation).clip(aoi)
+
+# visual parameters for the slopes imagery
+slopes_params = {
+  'min' : 0,
+  'max' : 90,
+  'palette' : ['#830cab','#7556f3','#5590e7','#3bbcac','#52d965','#86ea50','#ccec5a']  # color palette for drawing the layer based on slope angle on the map
+}
+
+####################  INDECES #################### 
+# ##### NDVI (Normalized Difference Vegetation Index)
+# defining NDVI compue function that normalizes the differences between two bands
+def getNDVI(image):
+  return image.normalizedDifference(['B8', 'B4'])
+
+# clipping to AOI
+ndvi = getNDVI(image.clip(aoi))
+
+# NDVI visual parameters:
+# Generating a color palette as visual parameter for NDVI display:
+# White/Light Green to Dark Green : No vegetation to High/Healthy vegetation
+ndvi_params = {
+  'min': 0,
+  'max': 1,
+  'palette': ['#ffffe5', '#f7fcb9', '#78c679', '#41ab5d', '#238443', '#005a32']
+}
+
+# ##### NDWI (Normalized Difference Water Index)
+def getNDWI(image):
+  return image.normalizedDifference(['B3', 'B11'])
+
+ndwi = getNDWI(image.clip(aoi))
+
+# NDWI visual parameters: (shallow water to deep water)
+ndwi_params = {
+    'min': 0,
+    'max': 1,
+    'palette': ['#00FFFF', '#0000FF']
+}
+
+# ########## IMAGES MASKS
+# Mask the non-watery parts of the image, where NDVI ratio value > 0.0
+ndvi_masked = ndvi.updateMask(ndvi.gte(0))
+
+# NDWI Masking: NDWI > 0.1
+ndwi_masked = ndwi.updateMask(ndwi.gte(0.1))
+
+# ########## ANALYSIS RESULTS CLASSIFICATION
+# ##### NDVI classification: 7 classes
+ndvi_classified = ee.Image(ndvi_masked) \
+  .where(ndvi.gte(0).And(ndvi.lte(0.15)), 2) \
+  .where(ndvi.gte(0.15).And(ndvi.lte(0.25)), 3) \
+  .where(ndvi.gte(0.25).And(ndvi.lte(0.35)), 4) \
+  .where(ndvi.gte(0.35).And(ndvi.lte(0.45)), 5) \
+  .where(ndvi.gte(0.45).And(ndvi.lte(0.65)), 6) \
+  .where(ndvi.gte(0.65).And(ndvi.lte(0.75)), 7) \
+  .where(ndvi.gte(0.75), 8) \
+
+# Classified NDVI visual parameters
+ndvi_classified_params = {
+  'min': 1,
+  'max': 7,
+  'palette': ['#a50026', '#ed5e3d', '#f9f7ae', '#fec978', '#9ed569', '#229b51', '#006837'] 
+  # each color corresponds to an NDVI class.
+}
+
+###########################################################
+#################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
-m = folium.Map(location = [36.6193, 2.2547], tiles='OpenStreetMap', zoom_start = 15, control_scale = True)
+m = folium.Map(location = [36.6193, 2.2450], tiles='OpenStreetMap', zoom_start = 14, control_scale = True)
 
 # setting up a minimap for general orientation when on zoom
 miniMap = MiniMap(
   toggle_display = True,
-  zoom_level_offset = -7,
-  tile_layer='Stamen Terrain',
+  zoom_level_offset = -5,
+  tile_layer='cartodbdark_matter',
   width=140,
   height=100
 ).add_to(m)
@@ -30,29 +170,40 @@ m.add_child(miniMap)
 
 # ########## Primary basemaps (victor data):
 basemap1 = folium.TileLayer('stamenterrain', name='Stamen Terrain')
-basemap1.add_to(m)
+# basemap1.add_to(m)
 
 basemap2 = folium.TileLayer('cartodbdark_matter', name='Dark Matter')
 basemap2.add_to(m)
 
-# ########## Secondary basemaps (raster data):
-# ##### ESRI sattelite imagery service
+# # ########## Secondary basemaps (raster data):
+# ##### CyclOSM
 basemap3 = (
-    'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery' + '/MapServer/tile/{z}/{y}/{x}'
+  'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png'
 )
 WmsTileLayer(
   url=basemap3,
+  layers=None,
+  name='Topography Map',
+  attr='Topography Map'
+).add_to(m)
+
+# ##### ESRI sattelite imagery service
+basemap4 = (
+    'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery' + '/MapServer/tile/{z}/{y}/{x}'
+)
+WmsTileLayer(
+  url=basemap4,
   layers=None,
   name='ESRI Sattelite Imagery',
   attr='ESRI World Imagery'
 ).add_to(m)
 
 # ##### Google sattelite imagery service
-basemap4 = (
+basemap5 = (
     'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
 )
 WmsTileLayer(
-  url=basemap4,
+  url=basemap5,
   layers=None,
   name='Google Sattelite Imagery',
   attr='Google'
@@ -233,9 +384,9 @@ CONSTRUCTION_ZONES_INFO = folium.features.GeoJson(
   style_function = construction_zones_style_function, 
   highlight_function = construction_zones_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    fields=['zone-designation', 'name'],
-    aliases=['Zone designation: ', 'Name: '],
-    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
+    fields=['name', 'zone-designation', 'area'],
+    aliases=['Name: ', 'Zone designation: ', 'Area: '],
+    style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;")
   )
 )
 m.add_child(CONSTRUCTION_ZONES_INFO)
@@ -257,7 +408,7 @@ roads_highlight_function = lambda x: {
 
 ROADS_INFO = folium.features.GeoJson(
   roads,
-  name = 'roads',
+  name = 'Roads - Port access infrastructure',
   control = True,
   style_function = roads_style_function, 
   highlight_function = roads_highlight_function,
@@ -307,8 +458,8 @@ FORESTS_AFFECTED_INFO = folium.features.GeoJson(
   style_function = forests_az_style_function, 
   highlight_function = forests_az_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    fields=['name', 'section', 'ilot', 'area'],
-    aliases=['Name: ', 'Section: ', 'Ilot: ', 'Superficie Touchee (Ha): '],
+    fields=['name', 'type', 'status', 'section', 'ilot', 'area'],
+    aliases=['Name: ', 'Type: ', 'Project status: ', 'Section: ', 'Ilot: ', 'Superficie Touchee (Ha): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
@@ -325,7 +476,7 @@ forests_pz_style_function = lambda x: {
 }
 
 forests_pz_highlight_function = lambda x: {
-  'fillColor': '#0b8a03', 
+  'fillColor': '#0b8a03',
   'color':'#0b8a03', 
   'fillOpacity': 0.80,
   'opacity' : 0.50,
@@ -340,8 +491,8 @@ FORESTS_PRESERVED_INFO = folium.features.GeoJson(
   style_function = forests_pz_style_function, 
   highlight_function = forests_pz_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    fields=['name', 'area'],
-    aliases=['Name: ', 'Superficie (Ha): '],
+    fields=['name', 'type', 'status', 'area'],
+    aliases=['Name: ', 'Type: ', 'Project status: ', 'Superficie (Ha): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
@@ -373,8 +524,8 @@ AGRO_FARM_LAND_INFO = folium.features.GeoJson(
   style_function = agro_farm_land_style_function, 
   highlight_function = agro_farm_land_highlight_function,
   tooltip=folium.features.GeoJsonTooltip(
-    fields=['designation'],
-    aliases=['Land designation: '],
+    fields=['designation', 'status'],
+    aliases=['Land designation: ', 'Project status: '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   )
 )
@@ -411,15 +562,197 @@ WATERWAYS_INFO = folium.features.GeoJson(
 )
 m.add_child(WATERWAYS_INFO)
 
+############################################################
+#################### COMPUTED RASTER LAYERS ####################
+
+# adding main satellite image as layer
+m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
+
+# ##### SRTM elevation & slopes
+# adding DEM layer
+#m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
+
+# adding SRTM elevation layer
+m.add_ee_layer(elevation, elevation_params, 'Elevation')
+
+# adding slopes layer
+m.add_ee_layer(slopes, slopes_params, 'Slopes')
+
+# adding NDVI layer to the map
+m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
+
+# adding Classified NDVI layer to the map
+m.add_ee_layer(ndvi_classified, ndvi_classified_params, 'NDVI - Classified')
+
+# adding NDWI layer to the map
+m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
 
 #################### Layer controller ####################
 
-folium.LayerControl(collapsed=False).add_to(m)
+folium.LayerControl(collapsed=True).add_to(m)
+
+#################### MAP LEGEND ####################
+#<link rel="stylesheet" href="style.css">
+#<div class="leaflet-control-layers-separator"></div>
+
+legend_setup = """
+{% macro html(this, kwargs) %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>PORT CENTRE DE CHERCHELL - IMAGERY ANALYSIS</title>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="src/ui.css">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+        <script>
+            $(function() {
+                $("#ui-container, #title-container, #project-container").draggable({
+                    start: function(event, ui) {
+                        $(this).css({
+                            right: "auto",
+                            top: "auto",
+                            bottom: "auto"
+                        });
+                    }
+                });
+            });
+        </script>
+    </head>
+
+  <body>
+  <div class="ui-container" id="title-container">
+    <div class="map-title">
+      <p>CHERCHELL CENTER PORT - ENVIRONEMENTAL STUDY</p>
+    </div>
+  </div>
+  
+  <div class="ui-container" id="project-container">
+      <div class="project-source">
+          <div class="project-logo">
+              <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank">
+                <i class="fa fa-github" aria-hidden="true"></i>
+              </a>
+          </div>
+          
+          <div class="project-info">
+            <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank"><p  class="project-link">IndigoWizard/mega-port-environment</p></a>
+            <div class="project-stats">
+              <a href="https://github.com/IndigoWizard/mega-port-environment/releases/tag/0.1.1" target="_blank"><i class="fa fa-tag" aria-hidden="true"> 0.2.0</i></a>
+              <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa fa-star" aria-hidden="true"> Star it!</i></a>
+              <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa fa-code-fork" aria-hidden="true"> Fork it!</i></a>
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <div id="ui-container" class="ui-container">
+      <div class='legend-title'>Legend</div>
+      
+      <div class="index-container">
+
+        <div class='legend-scale' id="VECTOR">
+          <ul class='legend-labels'>
+            <li><span style='background:#9e57b0;opacity:0.8;'></span>Logistic industrial zones.</li>
+            <li><span style='background:#0000ff;opacity:0.8;border: 4px #1a9a00 dotted;'></span>Construction sites.</li>
+            <li><span style='background:#740118;opacity:0.8;'></span>Port main infrastructure.</li>
+            <li><span style="border:3px dashed #1d1f2b;height:0;opacity:0.8;margin-top: 8px;"></span>Port futur highway.</li>
+            <li><span style="border:3px dashed #ff0;height:0;opacity:0.8;background: #b8cee299;margin-top: 8px;"></span>Port futur highway - Suggested deviation.</li>
+            <li><span style='background:#145B27;opacity:0.8;'></span>Forests - Affected Zones.</li>
+            <li><span style='background:#0b8a03;opacity:0.8;'></span>Forests - Preserved Natural Zones.</li>
+            <li><span style='background:#00c632;opacity:0.8;'></span>Farms and Aggricultural lands.</li>
+            <li><span style='background:#0070ec;opacity:0.8;'></span>Shoreline.</li>
+            <li><span style='background:#75cff0;opacity:0.8;'></span>Waterways.</li>
+          </ul>
+        </div>
+
+        <div class='legend-scale' id="NDVI">
+            <h4>NDVI</h4>
+            <ul class='legend-labels'>
+                <li><span style='background:#ed5e3d;opacity:0.8;'></span>0.0 - 0.1 : Bareland / Settlements</li>
+                <li><span style='background:#fec978;opacity:0.8;'></span>0.1 - 0.25 : Low vegeation</li>
+                <li><span style='background:#f9f7ae;opacity:0.8;'></span>0.25 - 0.35 : Crops</li>
+                <li><span style='background:#9ed569;opacity:0.8;'></span>0.35 - 0.55 : Low vegetation</li>
+                <li><span style='background:#229b51;opacity:0.8;'></span>0.55 - 0.75 : High vegetation</li>
+                <li><span style='background:#006837;opacity:0.8;'></span>> 0.75 : Forest</li>
+            </ul>
+        </div>
+
+        <div class="index-gradient">
+
+          <div class="index-gradient-container">
+            <div class='legend-scale' id="NDWI">
+              <h4>NDWI</h4>
+              <div class="inside-container">
+                <div class="gradient-block">
+                  <span id="ndwi-gradient"></span>
+                </div>
+                <div class="gradient-text">
+                  <p>Shallow<br>waters</p>
+                  <p>Deep<br>waters</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="index-gradient-container">
+            <div class='legend-scale' id="DEM">
+              <h4>DEM</h4>
+              <div class="inside-container">
+                <div class="gradient-block">
+                  <span id="dem-gradient"></span>
+                </div>
+                <div class="gradient-text">
+                  <p>1000m</p>
+                  <p>500m</p>
+                  <p>0m</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="index-gradient-container" id="far-right">
+            <div class='legend-scale' id="Slopes">
+              <h4>Slopes</h4>
+              <div class="inside-container">
+                <div class="gradient-block">
+                  <span id="slopes-gradient"></span>
+                </div>
+                <div class="gradient-text">
+                  <p>90°</p>
+                  <p>60°</p>
+                  <p>30°</p>
+                  <p>0°</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+  </div>
+
+  </body>
+</html>
+{% endmacro %}
+"""
+
+# configuring the legend
+legend = MacroElement()
+legend._template = Template(legend_setup)
+
+# adding legend to the map
+m.get_root().add_child(legend)
 
 #################### Creating the map file #################### 
 
 # Generating a file for the map and setting it to open on default browser
-m.save('web-map.html')
+m.save('webmap.html')
 
 # Opening the map file in default browser on execution
-webbrowser.open('web-map.html')
+webbrowser.open('webmap.html')

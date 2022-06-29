@@ -9,8 +9,9 @@
         "stroke-opacity": 1,
         "fill": "#0000ff",
         "fill-opacity": 0.2,
+        "name": "ANRPC base",
         "zone-designation": "Construction site",
-        "name": "ANRPC base"
+        "area": "16 Ha 96 Ares"
       },
       "geometry": {
         "type": "Polygon",
@@ -548,8 +549,9 @@
         "stroke-opacity": 1,
         "fill": "#0000ff",
         "fill-opacity": 0.2,
+        "name": "CSCEC Hardware and logistic park",
         "zone-designation": "Construction site",
-        "name": "CSCEC Hardware and logistic park"
+        "area": "6 Ha 45 Ares"
       },
       "geometry": {
         "type": "Polygon",
@@ -683,8 +685,9 @@
         "stroke-opacity": 1,
         "fill": "#0000ff",
         "fill-opacity": 0.2,
+        "name": "COSIDER and MEDITRAM base",
         "zone-designation": "Construction site",
-        "name": "COSIDER and MEDITRAM base"
+        "area": "9 Ha 63 Ares"
       },
       "geometry": {
         "type": "Polygon",
