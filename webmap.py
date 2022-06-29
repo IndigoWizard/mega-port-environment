@@ -14,6 +14,7 @@ import webbrowser
 # ########## Earth Engine Setup
 # Triggering authentification to earth engine services
 # Uncomment then execute only once > auth succecfull > put back as a comment:
+
 #ee.Authenticate()
 
 # initializing the earth engine library
@@ -640,7 +641,7 @@ legend_setup = """
           <div class="project-info">
             <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank"><p  class="project-link">IndigoWizard/mega-port-environment</p></a>
             <div class="project-stats">
-              <a href="https://github.com/IndigoWizard/mega-port-environment/releases/tag/0.1.1" target="_blank"><i class="fa fa-tag" aria-hidden="true"> 0.1.1</i></a>
+              <a href="https://github.com/IndigoWizard/mega-port-environment/releases/tag/0.1.1" target="_blank"><i class="fa fa-tag" aria-hidden="true"> 0.2.0</i></a>
               <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa fa-star" aria-hidden="true"> Star it!</i></a>
               <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa fa-code-fork" aria-hidden="true"> Fork it!</i></a>
             </div>
@@ -751,7 +752,7 @@ m.get_root().add_child(legend)
 #################### Creating the map file #################### 
 
 # Generating a file for the map and setting it to open on default browser
-m.save('web-map.html')
+m.save('webmap.html')
 
 # Opening the map file in default browser on execution
-webbrowser.open('web-map.html')
+webbrowser.open('webmap.html')
