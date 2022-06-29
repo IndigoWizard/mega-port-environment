@@ -4,13 +4,15 @@
 
 Open for contribution!
 
-Project website: https://indigowizard.github.io/mega-port-environment/web-map.html
+Project website: https://indigowizard.github.io/mega-port-environment/webmap.html
 
 # [Table of Content](#table-of-content)
 - [Introduction](#introduction)
 - [Features](#features)
+- [Preview](#preview)
 - [User and installation guide](#user-and-installation-guide)
 - [Contribution](#contribution)
+- [Credit](#credit)
 
 ## Introduction:
 This project is meant to create a script(s) that help analyse different satellite imagery layers to calculate various environmental indices and generate land-surface data that can help study the environmental impact in the mega port project's area.
@@ -34,6 +36,8 @@ A breif list of features supported in this webapp (see [release note](https://gi
 More features will be added in the future (contribution is welcome!).
 ## Preview
 ![demo-preview](https://www.pixenli.com/image/gKY-A2Fd)
+
+A layered static preview of the multiple availble layers within the map currently.
 
 ## User and installation guide
 **For end users:**
@@ -92,7 +96,7 @@ That's it, you're good to go!
 
 ## Contribution:
 The project is open for contribution where you can help improve, fix or add features. Please 
-refer to [CONTRIBUTING.md](CONTRIBUTING.md) for more details and guidelines.
+refer to [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for more details and guidelines.
 
 It's important that you check the **issues** section before:
 - **Reporting a bug**
@@ -101,4 +105,7 @@ It's important that you check the **issues** section before:
 - **Implementing features**
 - **Writing documentation**
 
-If no issue alrady exist regarding your contribution subject you may open an issue and get to work.
+If no issue alrady exists regarding your contribution subject you may open an issue and get to work.
+
+#### Credit
+Project by Ahmed I. Mokhtari.
