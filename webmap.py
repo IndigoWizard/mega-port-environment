@@ -193,7 +193,7 @@ ndbi = ndbi.clip(aoi)
 ndbi_params = {
   'min': -1,
   'max': 1,
-  'palette': ['#FF00FF']
+  'palette': ['#B50044']
 }
 
 
@@ -779,17 +779,54 @@ legend_setup = """
           </ul>
         </div>
 
+        
+
         <div class='legend-scale' id="NDVI">
             <h4>NDVI</h4>
             <ul class='legend-labels'>
-                <li><span style='background:#ed5e3d;opacity:0.8;'></span>0.0 - 0.1 : Bareland / Settlements</li>
-                <li><span style='background:#fec978;opacity:0.8;'></span>0.1 - 0.25 : Low vegeation</li>
-                <li><span style='background:#f9f7ae;opacity:0.8;'></span>0.25 - 0.35 : Crops</li>
-                <li><span style='background:#9ed569;opacity:0.8;'></span>0.35 - 0.55 : Low vegetation</li>
-                <li><span style='background:#229b51;opacity:0.8;'></span>0.55 - 0.75 : High vegetation</li>
+                <li><span style='background:#a50026;opacity:0.8;'></span>0.0 - 0.15 : Built-up / rocky surface</li>
+                <li><span style='background:#ed5e3d;opacity:0.8;'></span>0.15 - 0.25 : Bare soil</li>
+                <li><span style='background:#f9f7ae;opacity:0.8;'></span>0.25 - 0.35 : Low vegeation</li>
+                <li><span style='background:#fec978;opacity:0.8;'></span>0.35 - 0.45 : Crops</li>
+                <li><span style='background:#9ed569;opacity:0.8;'></span>0.45 - 0.65 : High vegetation</li>
+                <li><span style='background:#229b51;opacity:0.8;'></span>0.65 - 0.75 : Dense vegetation</li>
                 <li><span style='background:#006837;opacity:0.8;'></span>> 0.75 : Forest</li>
             </ul>
         </div>
+
+        <div class='legend-scale' id="NDMI">
+            <h4>NDMI</h4>
+            <ul class='legend-labels'>
+                <li><span style='background:#d02f05;opacity:0.8;'></span>-1.0 - -0.1 : No vegetation / Bare soil</li>
+                <li><span style='background:#fb7e21;opacity:0.8;'></span>-0.1 - 0 :absent canopy cover </li>
+                <li><span style='background:#eecf3a;opacity:0.8;'></span>0 - 0.1 : Low canopy cover, dry</li>
+                <li><span style='background:#a4fc3c;opacity:0.8;'></span>0.1 - 0.2 : Average canopy cover  high water stress</li>
+                <li><span style='background:#32f298;opacity:0.8;'></span>0.2 - 0.3 : mid-low canopy cover, low water stress</li>
+                <li><span style='background:#28bceb;opacity:0.8;'></span>0.3 - 0.4 : Mid-high canopy cover - low water stress</li>
+                <li><span style='background:#466be3;opacity:0.8;'></span> 0.4 - 0.5: High canopy cover, no water stress</li>
+                <li><span style='background:#30123b;opacity:0.8;'></span>> 0.5 : Very high canopy cover, no water stress</li>
+            </ul>
+        </div>
+
+        <div class='legend-scale' id="EVI">
+            <h4>EVI</h4>
+            <ul class='legend-labels'>
+                <li><span style='background:#5628a1;opacity:0.8;'></span></li>
+                <li><span style='background:#aaf6a2;opacity:0.8;'></span></li>
+                <li><span style='background:#6bea5d;opacity:0.8;'></span></li>
+                <li><span style='background:#22d33d;opacity:0.8;'></span></li>
+                <li><span style='background:#219733;opacity:0.8;'></span>Healthy vegetation</li>
+            </ul>
+        </div>
+
+        <div class='legend-scale' id="NDBI">
+            <h4>NDBI</h4>
+            <ul class='legend-labels'>
+                <li><span style='background:#B50044;opacity:0.8;'></span>-1 - 0.5 : Built-up area / Baren surface</li>
+            </ul>
+        </div>
+
+        
 
         <div class="index-gradient">
 

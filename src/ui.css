@@ -48,6 +48,9 @@
 	left: 5px;
 	bottom: 45px;
   margin-top: 75px;
+	height: 520px;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 p {
