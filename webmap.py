@@ -6,6 +6,8 @@ from folium import features
 from folium.plugins import MiniMap
 from folium import WmsTileLayer
 from branca.element import Template, MacroElement
+import geemap
+import geemap.colormaps as cm
 import geojson
 import os
 import webbrowser
@@ -14,7 +16,6 @@ import webbrowser
 # ########## Earth Engine Setup
 # Triggering authentification to earth engine services
 # Uncomment then execute only once > auth succecfull > put back as a comment:
-
 #ee.Authenticate()
 
 # initializing the earth engine library
@@ -38,11 +39,17 @@ folium.Map.add_ee_layer = add_ee_layer
 
 # creating delimitation Area Of Interest/Study of the project (AOI/AOS)
 #aoi = ee.Geometry.Rectangle([[2.4125581916503958, 36.49689168784115], [2.1626192268066458, 36.653497195420755]])
+aoi = ee.Geometry.Rectangle([[2.2149467468261785, 36.63784557196929], [2.2794914245605535, 36.58024660149864]])
+
 # Buffer/Circular AOI
-aoi = ee.Geometry.Point([2.310362, 36.577489]).buffer(10500)
+#aoi = ee.Geometry.Point([2.310362, 36.577489]).buffer(10500)
 
 # Passing main Sentinel-2 imagery ID: image1 (date: 2021-10-21)
-image = ee.Image('COPERNICUS/S2_SR/20211019T104051_20211019T104645_T31SDA')
+# 2021-10-19: COPERNICUS/S2/20211019T104051_20211019T104645_T31SDA
+# 2021-02-16: COPERNICUS/S2/20210216T104019_20210216T104758_T31SDA
+# 2022-02-18: COPERNICUS/S2_SR/20220218T102949_20220218T103126_T31SDA
+image = ee.Image('COPERNICUS/S2_SR/20220218T102949_20220218T103126_T31SDA')
+image_2 = ee.Image('COPERNICUS/S2/20220218T102949_20220218T103126_T31SDA')
 
 # ########## Visual Displays
 # clipping the image to study area borders
@@ -88,7 +95,18 @@ slopes = ee.Terrain.slope(elevation).clip(aoi)
 slopes_params = {
   'min' : 0,
   'max' : 90,
-  'palette' : ['#830cab','#7556f3','#5590e7','#3bbcac','#52d965','#86ea50','#ccec5a']  # color palette for drawing the layer based on slope angle on the map
+  'palette' : ['#6f0a91','#43d1bf','#86ea50','#ccec5a'] # color palette for drawing the layer based on slope angle on the map
+}
+
+# ##### Contour lines
+# deriving countour lines from previous DEM through Terrain
+contours = geemap.create_contours(dem, 0, 905, 15, region=aoi)
+
+# visual parameters for the contour lines
+contours_params = {
+    'min': 0,
+    'max': 1000,
+    'palette': ['#440044', '#00FFFF', '#00FFFF', '#00FFFF']
 }
 
 ####################  INDECES #################### 
@@ -110,10 +128,10 @@ ndvi_params = {
 }
 
 # ##### NDWI (Normalized Difference Water Index)
-def getNDWI(image):
-  return image.normalizedDifference(['B3', 'B11'])
+def getNDWI(image_2):
+  return image_2.normalizedDifference(['B3', 'B11'])
 
-ndwi = getNDWI(image.clip(aoi))
+ndwi = getNDWI(image_2.clip(aoi))
 
 # NDWI visual parameters: (shallow water to deep water)
 ndwi_params = {
@@ -122,23 +140,90 @@ ndwi_params = {
     'palette': ['#00FFFF', '#0000FF']
 }
 
+# ##### NDMI (Normalized Difference Moisture Index)
+ndmi = image.expression(
+  '((nir-swir1)/(nir+swir1))', {
+    'nir': image.select('B8'),
+    'swir1': image.select('B11')
+  }
+)
+
+# clipping NDMI to area of interest
+ndmi = ndmi.clip(aoi)
+
+# NDMI visual parameters
+ndmi_params = {
+  'min': 1,
+  'max': 8,
+  'palette': ['#d02f05', '#fb7e21', '#eecf3a', '#a4fc3c', '#32f298', '#28bceb', '#466be3', '#30123b']
+}
+
+# ##### EVI (Enhanced Vegetation Index)
+# EVI formula: 2.5[(NIR – RED) / (NIR + 6RED – 7.5BLUE +1)]
+evi = image.expression(
+  '2.5*((nir-red)/(nir+6*red-7.5*blue+1))', {
+    'blue': image.select('B2'),
+    'red': image.select('B4'),
+    'nir': image.select('B8')
+  }
+)
+
+# clipping EVI to area of interest
+evi = evi.clip(aoi)
+
+# EVI visual parameters
+evi_params = {
+  'min': 0,
+  'max': 4,
+  'palette': ['#5628a1', '#aaf6a2', '#6bea5d', '#22d33d', '#219733']
+}
+
+# ##### NDBI (Normalized Difference Built-up Index)
+# NDBI formula: (SWIR1 - NIR) / (SWIR1 + NIR)
+ndbi = image.expression(
+  '((swir1-nir)/(swir1+nir))', {
+    'nir': image.select('B8'),
+    'swir1': image.select('B11')
+  }
+)
+
+ndbi = ndbi.clip(aoi)
+
+# NDBI visual parameters
+ndbi_params = {
+  'min': -1,
+  'max': 1,
+  'palette': ['#FF00FF']
+}
+
+
 # ########## IMAGES MASKS
 # Mask the non-watery parts of the image, where NDVI ratio value > 0.0
 ndvi_masked = ndvi.updateMask(ndvi.gte(0))
 
+# EVI Masking: EVI > 0.0
+evi_masked = evi.updateMask(evi.gte(0.1))
+
+# NDMI Masking
+#ndmi_masked = ndmi.updateMask(ndmi.gte(0))
+
+# NDBI Masking: NDBI > 0.0
+ndbi_masked = ndbi.updateMask(ndbi.gte(0.01))
+
 # NDWI Masking: NDWI > 0.1
 ndwi_masked = ndwi.updateMask(ndwi.gte(0.1))
+
 
 # ########## ANALYSIS RESULTS CLASSIFICATION
 # ##### NDVI classification: 7 classes
 ndvi_classified = ee.Image(ndvi_masked) \
-  .where(ndvi.gte(0).And(ndvi.lte(0.15)), 2) \
-  .where(ndvi.gte(0.15).And(ndvi.lte(0.25)), 3) \
-  .where(ndvi.gte(0.25).And(ndvi.lte(0.35)), 4) \
-  .where(ndvi.gte(0.35).And(ndvi.lte(0.45)), 5) \
-  .where(ndvi.gte(0.45).And(ndvi.lte(0.65)), 6) \
-  .where(ndvi.gte(0.65).And(ndvi.lte(0.75)), 7) \
-  .where(ndvi.gte(0.75), 8) \
+  .where(ndvi.gte(0).And(ndvi.lt(0.15)), 1) \
+  .where(ndvi.gte(0.15).And(ndvi.lt(0.25)), 2) \
+  .where(ndvi.gte(0.25).And(ndvi.lt(0.35)), 3) \
+  .where(ndvi.gte(0.35).And(ndvi.lt(0.45)), 4) \
+  .where(ndvi.gte(0.45).And(ndvi.lt(0.65)), 5) \
+  .where(ndvi.gte(0.65).And(ndvi.lt(0.75)), 6) \
+  .where(ndvi.gte(0.75), 7) \
 
 # Classified NDVI visual parameters
 ndvi_classified_params = {
@@ -148,10 +233,23 @@ ndvi_classified_params = {
   # each color corresponds to an NDVI class.
 }
 
+# ##### NDMI classification: 8 classes
+ndmi_classified = ee.Image(ndmi) \
+  .where(ndmi.gte(-1).And(ndmi.lt(-0.1)), 1) \
+  .where(ndmi.gte(-0.1).And(ndmi.lt(0)), 2) \
+  .where(ndmi.gte(0).And(ndmi.lt(0.1)), 3) \
+  .where(ndmi.gte(0.1).And(ndmi.lt(0.2)), 4) \
+  .where(ndmi.gte(0.2).And(ndmi.lt(0.3)), 5) \
+  .where(ndmi.gte(0.3).And(ndmi.lt(0.4)), 6) \
+  .where(ndmi.gte(0.4).And(ndmi.lt(0.5)), 7) \
+  .where(ndmi.gte(0.5), 8) \
+
+# NDMI visual parameters are set to use the unclassified NDMI style (ndmi_params)
+
 ###########################################################
 #################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
-m = folium.Map(location = [36.6193, 2.2450], tiles='OpenStreetMap', zoom_start = 14, control_scale = True)
+m = folium.Map(location = [36.6193, 2.2450], tiles='OpenStreetMap', zoom_start = 12, control_scale = True)
 
 # setting up a minimap for general orientation when on zoom
 miniMap = MiniMap(
@@ -578,14 +676,26 @@ m.add_ee_layer(elevation, elevation_params, 'Elevation')
 # adding slopes layer
 m.add_ee_layer(slopes, slopes_params, 'Slopes')
 
+# adding EVI layer to the map
+m.add_ee_layer(evi_masked, evi_params, 'EVI')
+
+# adding NDMI layer
+m.add_ee_layer(ndmi_classified, ndmi_params, 'NDMI - Classified')
+
 # adding NDVI layer to the map
 m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
 
 # adding Classified NDVI layer to the map
 m.add_ee_layer(ndvi_classified, ndvi_classified_params, 'NDVI - Classified')
 
+# adding NDBI layer
+m.add_ee_layer(ndbi_masked, ndbi_params, 'NDBI')
+
 # adding NDWI layer to the map
 m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
+
+# adding contour lines to the map
+m.add_ee_layer(contours, contours_params, 'Contour lines')
 
 #################### Layer controller ####################
 
@@ -750,6 +860,20 @@ legend._template = Template(legend_setup)
 m.get_root().add_child(legend)
 
 #################### Creating the map file #################### 
+#### Export image
+
+# path = image.getDownloadUrl({
+#   'image': image_satellite,
+#   'bands': ['B2', 'B3', 'B4', 'B8'],
+#   'description': 'Sentinel-2',
+#   'scale': 8, # for resolution of image
+#   'crs': 'EPSG:4326', # which crs-transformation should apply
+#   'region': aoi,
+#   'maxPixels': 1e9,
+#   })
+
+# print downloadable link you can download image by click link printed by program
+#print (path)
 
 # Generating a file for the map and setting it to open on default browser
 m.save('webmap.html')
