@@ -16,8 +16,8 @@
 .ui-container {
 	position: absolute;
 	z-index: 999;
-	border: 2px solid grey;
-	background-color: rgba(207, 232, 255, 0.75);
+	border: 2px solid #d7a45d;
+	background-color: rgba(255, 255, 255, 0.85);
 }
 
 #title-container {
@@ -32,7 +32,7 @@
 
 .map-title {
 	text-align: center;
-  background-color: rgba(207, 232, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.85);
   color: #333333;
   font-family: arial;
   font-size: 14px;
@@ -49,8 +49,11 @@
 	bottom: 45px;
   margin-top: 75px;
 	height: 520px;
+	width: 300px;
 	overflow-x: hidden;
 	overflow-y: auto;
+	scrollbar-color: #d7a45d #d4aa7080;
+  scrollbar-width: thin;
 }
 
 p {
@@ -182,6 +185,7 @@ h4 {
   font-size: 14px;
   font-weight: bold;
 }
+
 #project-container{
   border-radius: 5px;
   padding: 2px 7px;
@@ -208,6 +212,8 @@ h4 {
 
 .project-stats {
   list-style: none;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
 }
 
 .project-stats li {
@@ -227,10 +233,26 @@ h4 {
   font-weight: bold;
 }
 
-/*
 .leaflet-control-layers-separator {
   height: 0;
-  border-top: 2px solid #656565;
-  margin: 5px -10px 5px -6px;
+  border-top: 2px solid #d4aa70;
+  margin: 10px 10px;
 }
-*/
+
+.leaflet-control-layers-list.leaflet-control-layers-scrollbar{
+	scrollbar-color: #d7a45d #d4aa7080;
+  scrollbar-width: thin;
+}
+
+#icons {
+	color: #575757;
+	transition: 0.2s ease-in-out;
+}
+#icons:hover {
+	color: #d7a45d;
+	transition: 0.2s ease-in-out;
+}
+#icons:hover::after {
+	color: #575757;
+	transition: 0.2s ease-out;
+}

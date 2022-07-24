@@ -104,9 +104,9 @@ contours = geemap.create_contours(dem, 0, 905, 15, region=aoi)
 
 # visual parameters for the contour lines
 contours_params = {
-    'min': 0,
-    'max': 1000,
-    'palette': ['#440044', '#00FFFF', '#00FFFF', '#00FFFF']
+  'min': 0,
+  'max': 1000,
+  'palette': ['#440044', '#00FFFF', '#00FFFF', '#00FFFF']
 }
 
 ####################  INDECES #################### 
@@ -135,9 +135,9 @@ ndwi = getNDWI(image_2.clip(aoi))
 
 # NDWI visual parameters: (shallow water to deep water)
 ndwi_params = {
-    'min': 0,
-    'max': 1,
-    'palette': ['#00FFFF', '#0000FF']
+  'min': 0,
+  'max': 1,
+  'palette': ['#00FFFF', '#0000FF']
 }
 
 # ##### NDMI (Normalized Difference Moisture Index)
@@ -229,7 +229,7 @@ ndvi_classified = ee.Image(ndvi_masked) \
 ndvi_classified_params = {
   'min': 1,
   'max': 7,
-  'palette': ['#a50026', '#ed5e3d', '#f9f7ae', '#fec978', '#9ed569', '#229b51', '#006837'] 
+  'palette': ['#a50026', '#ed5e3d', '#f9f7ae', '#fec978', '#9ed569', '#229b51', '#006837']
   # each color corresponds to an NDVI class.
 }
 
@@ -744,16 +744,16 @@ legend_setup = """
       <div class="project-source">
           <div class="project-logo">
               <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank">
-                <i class="fa fa-github" aria-hidden="true"></i>
+                <i class="fa fa-github" aria-hidden="true" id="icons"></i>
               </a>
           </div>
           
           <div class="project-info">
-            <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank"><p  class="project-link">IndigoWizard/mega-port-environment</p></a>
+            <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank"><p  class="project-link"  id="icons">IndigoWizard/mega-port-environment</p></a>
             <div class="project-stats">
-              <a href="https://github.com/IndigoWizard/mega-port-environment/releases/tag/0.1.1" target="_blank"><i class="fa fa-tag" aria-hidden="true"> 0.2.0</i></a>
-              <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa fa-star" aria-hidden="true"> Star it!</i></a>
-              <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa fa-code-fork" aria-hidden="true"> Fork it!</i></a>
+              <a href="https://github.com/IndigoWizard/mega-port-environment/releases/" target="_blank"><i class="fa fa-tag" aria-hidden="true" id="icons"> 0.2.1</i></a>
+              <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa fa-star" aria-hidden="true" id="icons"> Star it!</i></a>
+              <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa fa-code-fork" aria-hidden="true" id="icons"> Fork it!</i></a>
             </div>
           </div>
       </div>
@@ -779,7 +779,7 @@ legend_setup = """
           </ul>
         </div>
 
-        
+        <div class="leaflet-control-layers-separator"></div>
 
         <div class='legend-scale' id="NDVI">
             <h4>NDVI</h4>
@@ -794,30 +794,36 @@ legend_setup = """
             </ul>
         </div>
 
+        <div class="leaflet-control-layers-separator"></div>
+
         <div class='legend-scale' id="NDMI">
             <h4>NDMI</h4>
             <ul class='legend-labels'>
-                <li><span style='background:#d02f05;opacity:0.8;'></span>-1.0 - -0.1 : No vegetation / Bare soil</li>
-                <li><span style='background:#fb7e21;opacity:0.8;'></span>-0.1 - 0 :absent canopy cover </li>
-                <li><span style='background:#eecf3a;opacity:0.8;'></span>0 - 0.1 : Low canopy cover, dry</li>
-                <li><span style='background:#a4fc3c;opacity:0.8;'></span>0.1 - 0.2 : Average canopy cover  high water stress</li>
-                <li><span style='background:#32f298;opacity:0.8;'></span>0.2 - 0.3 : mid-low canopy cover, low water stress</li>
-                <li><span style='background:#28bceb;opacity:0.8;'></span>0.3 - 0.4 : Mid-high canopy cover - low water stress</li>
-                <li><span style='background:#466be3;opacity:0.8;'></span> 0.4 - 0.5: High canopy cover, no water stress</li>
-                <li><span style='background:#30123b;opacity:0.8;'></span>> 0.5 : Very high canopy cover, no water stress</li>
+                <li><span style='background:#d02f05;opacity:0.8;'></span>-1.0 - -0.1 : No vegetation. Bare soil</li>
+                <li><span style='background:#fb7e21;opacity:0.8;'></span>-0.1 - 0 : Absent canopy cover</li>
+                <li><span style='background:#eecf3a;opacity:0.8;'></span>0 - 0.1 : Low dry canopy cover</li>
+                <li><span style='background:#a4fc3c;opacity:0.8;'></span>0.1 - 0.2 : Average canopy. High water stress</li>
+                <li><span style='background:#32f298;opacity:0.8;'></span>0.2 - 0.3 : Mid-low canopy. Low water stress</li>
+                <li><span style='background:#28bceb;opacity:0.8;'></span>0.3 - 0.4 : Mid-high canopy. Low water stress</li>
+                <li><span style='background:#466be3;opacity:0.8;'></span> 0.4 - 0.5: High canopy. No water stress</li>
+                <li><span style='background:#30123b;opacity:0.8;'></span>> 0.5 : Very high canopy. No water stress</li>
             </ul>
         </div>
+
+        <div class="leaflet-control-layers-separator"></div>
 
         <div class='legend-scale' id="EVI">
             <h4>EVI</h4>
             <ul class='legend-labels'>
-                <li><span style='background:#5628a1;opacity:0.8;'></span></li>
-                <li><span style='background:#aaf6a2;opacity:0.8;'></span></li>
-                <li><span style='background:#6bea5d;opacity:0.8;'></span></li>
-                <li><span style='background:#22d33d;opacity:0.8;'></span></li>
-                <li><span style='background:#219733;opacity:0.8;'></span>Healthy vegetation</li>
+                <li><span style='background:#5628a1;opacity:0.8;'></span>Built-up area</li>
+                <li><span style='background:#aaf6a2;opacity:0.8;'></span>Low vegetation over</li>
+                <li><span style='background:#6bea5d;opacity:0.8;'></span>Medium vegetation cover</li>
+                <li><span style='background:#22d33d;opacity:0.8;'></span>High vegetation cover</li>
+                <li><span style='background:#219733;opacity:0.8;'></span>Dense vegetation cover</li>
             </ul>
         </div>
+
+        <div class="leaflet-control-layers-separator"></div>
 
         <div class='legend-scale' id="NDBI">
             <h4>NDBI</h4>
@@ -826,7 +832,7 @@ legend_setup = """
             </ul>
         </div>
 
-        
+        <div class="leaflet-control-layers-separator"></div>
 
         <div class="index-gradient">
 
@@ -909,7 +915,7 @@ m.get_root().add_child(legend)
 #   'maxPixels': 1e9,
 #   })
 
-# print downloadable link you can download image by click link printed by program
+## print downloadable link you can download image by click link printed by program
 #print (path)
 
 # Generating a file for the map and setting it to open on default browser
