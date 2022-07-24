@@ -39,10 +39,10 @@ folium.Map.add_ee_layer = add_ee_layer
 
 # creating delimitation Area Of Interest/Study of the project (AOI/AOS)
 #aoi = ee.Geometry.Rectangle([[2.4125581916503958, 36.49689168784115], [2.1626192268066458, 36.653497195420755]])
-aoi = ee.Geometry.Rectangle([[2.2149467468261785, 36.63784557196929], [2.2794914245605535, 36.58024660149864]])
+#aoi = ee.Geometry.Rectangle([[2.2149467468261785, 36.63784557196929], [2.2794914245605535, 36.58024660149864]])
 
 # Buffer/Circular AOI
-#aoi = ee.Geometry.Point([2.310362, 36.577489]).buffer(10500)
+aoi = ee.Geometry.Point([2.310362, 36.577489]).buffer(10500)
 
 # Passing main Sentinel-2 imagery ID: image1 (date: 2021-10-21)
 # 2021-10-19: COPERNICUS/S2/20211019T104051_20211019T104645_T31SDA
@@ -84,7 +84,19 @@ elevation = dem.select('elevation').clip(aoi)
 elevation_params = {
   'min' : 0,
   'max' : 905,
-  'palette' : ['#440044', '#FF00FF', '#00FFFF'] # color palette for drawing the elevation model on the map
+  'palette' : ['#440044', '#FF00FF', '#00FFFF'],
+  'opacity': 0.8 # color palette for drawing the elevation model on the map
+}
+
+# ##### Hillshades (30m resolution)
+hillshade = ee.Terrain.hillshade(elevation)
+
+# visual parameters for hillshade layer
+hillshade_params = {
+  'min': 0,
+  'max': 270,
+  'palette': ['#000000', '#20034c', '#a02561', '#fbad07'],
+  'opacity': 1
 }
 
 # ##### Slopes (30m resolution)
@@ -95,7 +107,8 @@ slopes = ee.Terrain.slope(elevation).clip(aoi)
 slopes_params = {
   'min' : 0,
   'max' : 90,
-  'palette' : ['#6f0a91','#43d1bf','#86ea50','#ccec5a'] # color palette for drawing the layer based on slope angle on the map
+  'palette' : ['#6f0a91','#43d1bf','#86ea50','#ccec5a'],
+  'opacity': 0.8 # color palette for drawing the layer based on slope angle on the map
 }
 
 # ##### Contour lines
@@ -106,7 +119,8 @@ contours = geemap.create_contours(dem, 0, 905, 15, region=aoi)
 contours_params = {
   'min': 0,
   'max': 1000,
-  'palette': ['#440044', '#00FFFF', '#00FFFF', '#00FFFF']
+  'palette': ['#440044', '#00FFFF', '#00FFFF', '#00FFFF'],
+  'opacity': 0.8
 }
 
 ####################  INDECES #################### 
@@ -124,7 +138,8 @@ ndvi = getNDVI(image.clip(aoi))
 ndvi_params = {
   'min': 0,
   'max': 1,
-  'palette': ['#ffffe5', '#f7fcb9', '#78c679', '#41ab5d', '#238443', '#005a32']
+  'palette': ['#ffffe5', '#f7fcb9', '#78c679', '#41ab5d', '#238443', '#005a32'],
+  'opacity': 0.8
 }
 
 # ##### NDWI (Normalized Difference Water Index)
@@ -137,7 +152,8 @@ ndwi = getNDWI(image_2.clip(aoi))
 ndwi_params = {
   'min': 0,
   'max': 1,
-  'palette': ['#00FFFF', '#0000FF']
+  'palette': ['#00FFFF', '#0000FF'],
+  'opacity': 0.8
 }
 
 # ##### NDMI (Normalized Difference Moisture Index)
@@ -155,7 +171,8 @@ ndmi = ndmi.clip(aoi)
 ndmi_params = {
   'min': 1,
   'max': 8,
-  'palette': ['#d02f05', '#fb7e21', '#eecf3a', '#a4fc3c', '#32f298', '#28bceb', '#466be3', '#30123b']
+  'palette': ['#d02f05', '#fb7e21', '#eecf3a', '#a4fc3c', '#32f298', '#28bceb', '#466be3', '#30123b'],
+  'opacity': 0.8
 }
 
 # ##### EVI (Enhanced Vegetation Index)
@@ -175,7 +192,8 @@ evi = evi.clip(aoi)
 evi_params = {
   'min': 0,
   'max': 4,
-  'palette': ['#5628a1', '#aaf6a2', '#6bea5d', '#22d33d', '#219733']
+  'palette': ['#5628a1', '#aaf6a2', '#6bea5d', '#22d33d', '#219733'],
+  'opacity': 0.8
 }
 
 # ##### NDBI (Normalized Difference Built-up Index)
@@ -193,7 +211,8 @@ ndbi = ndbi.clip(aoi)
 ndbi_params = {
   'min': -1,
   'max': 1,
-  'palette': ['#B50044']
+  'palette': ['#B50044'],
+  'opacity': 0.8
 }
 
 
@@ -229,7 +248,8 @@ ndvi_classified = ee.Image(ndvi_masked) \
 ndvi_classified_params = {
   'min': 1,
   'max': 7,
-  'palette': ['#a50026', '#ed5e3d', '#f9f7ae', '#fec978', '#9ed569', '#229b51', '#006837']
+  'palette': ['#a50026', '#ed5e3d', '#f9f7ae', '#fec978', '#9ed569', '#229b51', '#006837'],
+  'opacity': 0.8
   # each color corresponds to an NDVI class.
 }
 
@@ -669,6 +689,9 @@ m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
 # ##### SRTM elevation & slopes
 # adding DEM layer
 #m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
+
+# adding Hillshades
+m.add_ee_layer(hillshade, hillshade_params, "Hillshade")
 
 # adding SRTM elevation layer
 m.add_ee_layer(elevation, elevation_params, 'Elevation')
