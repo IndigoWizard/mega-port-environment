@@ -113,7 +113,7 @@ slopes_params = {
 
 # ##### Contour lines
 # deriving countour lines from previous DEM through Terrain
-contours = geemap.create_contours(dem, 0, 905, 15, region=aoi)
+contours = geemap.create_contours(dem, 0, 905, 20, region=aoi)
 
 # visual parameters for the contour lines
 contours_params = {
@@ -789,16 +789,19 @@ legend_setup = """
 
         <div class='legend-scale' id="VECTOR">
           <ul class='legend-labels'>
+            <li><span style="background:#3333330d;opacity:0.8;border: 2px dashed #f90000;"></span>Wilaya Administrative Borders.</li>
+            <li><span style="background:#5555552e;opacity:0.8;border: 2px dashed #331D31;"></span>Municipalities Administrative Borders.</li>
             <li><span style='background:#9e57b0;opacity:0.8;'></span>Logistic industrial zones.</li>
             <li><span style='background:#0000ff;opacity:0.8;border: 4px #1a9a00 dotted;'></span>Construction sites.</li>
             <li><span style='background:#740118;opacity:0.8;'></span>Port main infrastructure.</li>
             <li><span style="border:3px dashed #1d1f2b;height:0;opacity:0.8;margin-top: 8px;"></span>Port futur highway.</li>
             <li><span style="border:3px dashed #ff0;height:0;opacity:0.8;background: #b8cee299;margin-top: 8px;"></span>Port futur highway - Suggested deviation.</li>
+            <li><span style="border:2px solid #0070ec;height:0;opacity:0.8;margin-top: 8px;"></span>Shoreline.</li>
             <li><span style='background:#145B27;opacity:0.8;'></span>Forests - Affected Zones.</li>
             <li><span style='background:#0b8a03;opacity:0.8;'></span>Forests - Preserved Natural Zones.</li>
             <li><span style='background:#00c632;opacity:0.8;'></span>Farms and Aggricultural lands.</li>
-            <li><span style='background:#0070ec;opacity:0.8;'></span>Shoreline.</li>
-            <li><span style='background:#75cff0;opacity:0.8;'></span>Waterways.</li>
+            <li><span style="border:2px solid #75cff0;height:0;opacity:0.8;margin-top: 8px;"></span>Shoreline.</li>
+            <li><span style="background:#75cff0eb;opacity:0.8;border: 2px solid #64aeca;"></span>Water bodies.</li>
           </ul>
         </div>
 
@@ -822,7 +825,7 @@ legend_setup = """
         <div class='legend-scale' id="NDMI">
             <h4>NDMI</h4>
             <ul class='legend-labels'>
-                <li><span style='background:#d02f05;opacity:0.8;'></span>-1.0 - -0.1 : No vegetation. Bare soil</li>
+                <li><span style='background:#d02f05;opacity:0.8;'></span>-1.0 - -0.1 : No vegetation/Bare soil/Water.</li>
                 <li><span style='background:#fb7e21;opacity:0.8;'></span>-0.1 - 0 : Absent canopy cover</li>
                 <li><span style='background:#eecf3a;opacity:0.8;'></span>0 - 0.1 : Low dry canopy cover</li>
                 <li><span style='background:#a4fc3c;opacity:0.8;'></span>0.1 - 0.2 : Average canopy. High water stress</li>
@@ -938,7 +941,7 @@ m.get_root().add_child(legend)
 #   'maxPixels': 1e9,
 #   })
 
-## print downloadable link you can download image by click link printed by program
+## print downloadable link you can download image by click link in the console
 #print (path)
 
 # Generating a file for the map and setting it to open on default browser
