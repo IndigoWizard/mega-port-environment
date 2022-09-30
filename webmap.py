@@ -59,8 +59,8 @@ image_satellite = image.clip(aoi).divide(10000)
 image_params = {
   'bands': ['B4',  'B3',  'B2'],
   'min': 0,
-  'max': 1,
-  'gamma': 2
+  'max': 0.3,
+  'gamma': 1
 }
 
 #################### Custom Visual Displays ####################
@@ -120,7 +120,7 @@ contours_params = {
   'min': 0,
   'max': 1000,
   'palette': ['#440044', '#00FFFF', '#00FFFF', '#00FFFF'],
-  'opacity': 0.8
+  'opacity': 0.3
 }
 
 ####################  INDECES #################### 
