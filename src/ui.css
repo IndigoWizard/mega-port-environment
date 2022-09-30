@@ -47,8 +47,7 @@
 	font-size: 14px;
 	left: 5px;
 	bottom: 45px;
-  margin-top: 75px;
-	height: 520px;
+	height: 586px;
 	width: 300px;
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -179,8 +178,9 @@ h4 {
 }
 
 .leaflet-control-zoom.leaflet-bar.leaflet-control{
-  left: 280px;
+  left: 296px;
 }
+
 .leaflet-control-scale-line {
   font-size: 14px;
   font-weight: bold;
@@ -224,8 +224,8 @@ h4 {
 .project-stats i {
   display: inline-block;
   padding: 0 4px;
-  font-size: 16px;
 	margin-left: 8px;
+  font-size: 14px;
 }
 
 .project-link{
@@ -242,6 +242,12 @@ h4 {
 .leaflet-control-layers-list.leaflet-control-layers-scrollbar{
 	scrollbar-color: #d7a45d #d4aa7080;
   scrollbar-width: thin;
+}
+
+.ghtext {
+	font-family: Arial, sans-serif;
+	font-weight: 600;
+	font-size: 12px;
 }
 
 #icons {

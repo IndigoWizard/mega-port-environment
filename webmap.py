@@ -735,7 +735,7 @@ legend_setup = """
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>PORT CENTRE DE CHERCHELL - IMAGERY ANALYSIS</title>
+        <title>Port Centre de Cherchell - Environmental Analysis</title>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="src/ui.css">
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -759,11 +759,11 @@ legend_setup = """
   <body>
   <div class="ui-container" id="title-container">
     <div class="map-title">
-      <p>CHERCHELL CENTER PORT - ENVIRONEMENTAL STUDY</p>
+      <p>Cherchell Center Port - Environmental Study</p>
     </div>
   </div>
   
-  <div class="ui-container" id="project-container">
+  <!-- <div class="ui-container" id="project-container">
       <div class="project-source">
           <div class="project-logo">
               <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank">
@@ -780,9 +780,29 @@ legend_setup = """
             </div>
           </div>
       </div>
-  </div>
+  </div> -->
 
   <div id="ui-container" class="ui-container">
+
+    <div class="project-source">
+      <div class="project-logo">
+          <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank">
+            <i class="fa fa-github" aria-hidden="true" id="icons"></i>
+          </a>
+      </div>
+
+      <div class="project-info">
+        <a href="https://github.com/IndigoWizard/mega-port-environment" title="Go to repository" target="_blank"><p  class="project-link"  id="icons">IndigoWizard/mega-port-environment</p></a>
+        <div class="project-stats">
+          <a href="https://github.com/IndigoWizard/mega-port-environment/releases/" target="_blank"><i class="fa fa-link" aria-hidden="true" id="icons"><span class="ghtext">  0.2.1</span></i></a>
+          <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa fa-star" aria-hidden="true" id="icons"><span class="ghtext"> Star it!</span></i></a>
+          <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa fa-code-fork" aria-hidden="true" id="icons"><span class="ghtext"> Fork it!</span></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="leaflet-control-layers-separator"></div>
+
       <div class='legend-title'>Legend</div>
       
       <div class="index-container">
@@ -854,7 +874,7 @@ legend_setup = """
         <div class='legend-scale' id="NDBI">
             <h4>NDBI</h4>
             <ul class='legend-labels'>
-                <li><span style='background:#B50044;opacity:0.8;'></span>-1 - 0.5 : Built-up area / Baren surface</li>
+                <li><span style='background:#B50044;opacity:0.8;'></span>Built-up area / Baren surface</li>
             </ul>
         </div>
 
@@ -870,8 +890,8 @@ legend_setup = """
                   <span id="ndwi-gradient"></span>
                 </div>
                 <div class="gradient-text">
-                  <p>Shallow<br>waters</p>
-                  <p>Deep<br>waters</p>
+                  <p>1</p>
+                  <p>-1</p>
                 </div>
               </div>
             </div>
