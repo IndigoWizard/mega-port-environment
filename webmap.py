@@ -269,7 +269,7 @@ ndmi_classified = ee.Image(ndmi) \
 ###########################################################
 #################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
-m = folium.Map(location = [36.6193, 2.2450], tiles='OpenStreetMap', zoom_start = 12, control_scale = True)
+m = folium.Map(location = [36.5711, 2.2834], tiles='OpenStreetMap', zoom_start = 12, control_scale = True)
 
 # setting up a minimap for general orientation when on zoom
 miniMap = MiniMap(
