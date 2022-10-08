@@ -47,7 +47,7 @@
 	font-size: 14px;
 	left: 5px;
 	bottom: 45px;
-	height: 586px;
+	top: 10px;
 	width: 300px;
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -231,6 +231,10 @@ h4 {
 .project-link{
   margin-left: 10px;
   font-weight: bold;
+}
+
+.leaflet-control-layers-toggle {
+	background-image: url(https://www.pixenli.com/image/RN6QMlKY);
 }
 
 .leaflet-control-layers-separator {
