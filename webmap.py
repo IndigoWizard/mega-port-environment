@@ -269,7 +269,7 @@ ndmi_classified = ee.Image(ndmi) \
 ###########################################################
 #################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
-m = folium.Map(location = [36.5711, 2.2834], tiles='OpenStreetMap', zoom_start = 12, control_scale = True)
+m = folium.Map(location = [36.5711, 2.2834], tiles=None, zoom_start = 12, control_scale = True)
 
 # setting up a minimap for general orientation when on zoom
 miniMap = MiniMap(
@@ -287,10 +287,10 @@ m.add_child(miniMap)
 # Adding different types of basemaps helps better visualize the different map features.
 
 # ########## Primary basemaps (victor data):
-basemap1 = folium.TileLayer('stamenterrain', name='Stamen Terrain')
-# basemap1.add_to(m)
+basemap1 = folium.TileLayer('cartodbdark_matter', name='Dark Matter')
+basemap1.add_to(m)
 
-basemap2 = folium.TileLayer('cartodbdark_matter', name='Dark Matter')
+basemap2 = folium.TileLayer('openstreetmap', name='Open Street Map')
 basemap2.add_to(m)
 
 # # ########## Secondary basemaps (raster data):
@@ -302,7 +302,8 @@ WmsTileLayer(
   url=basemap3,
   layers=None,
   name='Topography Map',
-  attr='Topography Map'
+  attr='Topography Map',
+  show=False
 ).add_to(m)
 
 # ##### ESRI sattelite imagery service
@@ -313,7 +314,8 @@ WmsTileLayer(
   url=basemap4,
   layers=None,
   name='ESRI Sattelite Imagery',
-  attr='ESRI World Imagery'
+  attr='ESRI World Imagery',
+  show=False
 ).add_to(m)
 
 # ##### Google sattelite imagery service
@@ -324,7 +326,8 @@ WmsTileLayer(
   url=basemap5,
   layers=None,
   name='Google Sattelite Imagery',
-  attr='Google'
+  attr='Google',
+  show=False
 ).add_to(m)
 
 #################### SPATIAL FEATURES LAYERS ####################
