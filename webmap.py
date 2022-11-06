@@ -797,7 +797,7 @@ legend_setup = """
       <div class="project-info">
         <a href="https://github.com/IndigoWizard/mega-port-environment" title="Go to repository" target="_blank"><p  class="project-link"  id="icons">IndigoWizard/mega-port-environment</p></a>
         <div class="project-stats">
-          <a href="https://github.com/IndigoWizard/mega-port-environment/releases/" target="_blank"><i class="fa fa-link" aria-hidden="true" id="icons"><span class="ghtext">  0.2.1</span></i></a>
+          <a href="https://github.com/IndigoWizard/mega-port-environment/releases/" target="_blank"><i class="fa fa-tag" aria-hidden="true" id="icons"><span class="ghtext">  0.2.1</span></i></a>
           <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa fa-star" aria-hidden="true" id="icons"><span class="ghtext"> Star it!</span></i></a>
           <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa fa-code-fork" aria-hidden="true" id="icons"><span class="ghtext"> Fork it!</span></i></a>
         </div>
