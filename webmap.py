@@ -278,7 +278,7 @@ miniMap = MiniMap(
   tile_layer='cartodbdark_matter',
   width=140,
   height=100
-).add_to(m)
+)
 
 m.add_child(miniMap)
 
@@ -725,7 +725,7 @@ m.add_ee_layer(contours, contours_params, 'Contour lines')
 
 #################### Layer controller ####################
 
-folium.LayerControl(collapsed=True).add_to(m)
+folium.LayerControl(collapsed=False).add_to(m)
 
 #################### MAP LEGEND ####################
 #<link rel="stylesheet" href="style.css">
@@ -740,6 +740,7 @@ legend_setup = """
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Port Centre de Cherchell - Environmental Analysis</title>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
         <link rel="stylesheet" href="src/ui.css">
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -766,40 +767,21 @@ legend_setup = """
     </div>
   </div>
   
-  <!-- <div class="ui-container" id="project-container">
-      <div class="project-source">
-          <div class="project-logo">
-              <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank">
-                <i class="fa fa-github" aria-hidden="true" id="icons"></i>
-              </a>
-          </div>
-          
-          <div class="project-info">
-            <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank"><p  class="project-link"  id="icons">IndigoWizard/mega-port-environment</p></a>
-            <div class="project-stats">
-              <a href="https://github.com/IndigoWizard/mega-port-environment/releases/" target="_blank"><i class="fa fa-tag" aria-hidden="true" id="icons"> 0.2.1</i></a>
-              <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa fa-star" aria-hidden="true" id="icons"> Star it!</i></a>
-              <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa fa-code-fork" aria-hidden="true" id="icons"> Fork it!</i></a>
-            </div>
-          </div>
-      </div>
-  </div> -->
-
   <div id="ui-container" class="ui-container">
 
     <div class="project-source">
       <div class="project-logo">
           <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank">
-            <i class="fa fa-github" aria-hidden="true" id="icons"></i>
+            <i class="fa-brands fa-github" aria-hidden="true" id="icons"></i>
           </a>
       </div>
 
       <div class="project-info">
         <a href="https://github.com/IndigoWizard/mega-port-environment" title="Go to repository" target="_blank"><p  class="project-link"  id="icons">IndigoWizard/mega-port-environment</p></a>
         <div class="project-stats">
-          <a href="https://github.com/IndigoWizard/mega-port-environment/releases/" target="_blank"><i class="fa fa-tag" aria-hidden="true" id="icons"><span class="ghtext">  0.2.1</span></i></a>
-          <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa fa-star" aria-hidden="true" id="icons"><span class="ghtext"> Star it!</span></i></a>
-          <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa fa-code-fork" aria-hidden="true" id="icons"><span class="ghtext"> Fork it!</span></i></a>
+          <a href="https://github.com/IndigoWizard/mega-port-environment/releases/" target="_blank"><i class="fa-solid fa-tag" aria-hidden="true" id="icons"><span class="ghtext">  0.2.1</span></i></a>
+          <a href="https://github.com/IndigoWizard/mega-port-environment/stargazers" target="_blank"><i class="fa-solid fa-star" aria-hidden="true" id="icons"><span class="ghtext"> Star it!</span></i></a>
+          <a href="https://github.com/IndigoWizard/mega-port-environment/network/members" target="_blank"><i class="fa-solid fa-code-fork" aria-hidden="true" id="icons"><span class="ghtext"> Fork it!</span></i></a>
         </div>
       </div>
     </div>
