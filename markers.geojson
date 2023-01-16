@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "M1",
+        "note": "This is M1",
+        "marker-color": "#ff0000",
+        "marker-size": "medium"
+      },
+      "geometry": {
+        "coordinates": [
+          2.260593375014423,
+          36.65053558389289
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "M2",
+        "note": "This is M2",
+        "marker-color": "#00ff00",
+        "marker-size": "medium"
+      },
+      "geometry": {
+        "coordinates": [
+          2.274687959085128,
+          36.651049580448955
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "M3",
+        "note": "This is M3",
+        "marker-color": "#0000ff",
+        "marker-size": "medium"
+      },
+      "geometry": {
+        "coordinates": [
+          2.284618234225462,
+          36.65079258259934
+        ],
+        "type": "Point"
+      }
+    }
+  ]
+}
