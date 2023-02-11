@@ -3,6 +3,7 @@ import ee
 from ee import image
 import folium
 from folium import features
+from folium.plugins import GroupedLayerControl
 from folium.plugins import MiniMap
 from folium import WmsTileLayer
 from branca.element import Template, MacroElement
@@ -287,19 +288,16 @@ m.add_child(miniMap)
 # Adding different types of basemaps helps better visualize the different map features.
 
 # ########## Primary basemaps (victor data):
-basemap1 = folium.TileLayer('cartodbdark_matter', name='Dark Matter')
+basemap1 = folium.TileLayer('cartodbdark_matter', name='ENVIRONEMENTAL INDEXES')
 basemap1.add_to(m)
 
-basemap2 = folium.TileLayer('openstreetmap', name='Open Street Map')
+basemap2 = folium.TileLayer('openstreetmap', name='Open Street Map', show=False)
 basemap2.add_to(m)
 
 # # ########## Secondary basemaps (raster data):
 # ##### CyclOSM
-basemap3 = (
-  'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png'
-)
-WmsTileLayer(
-  url=basemap3,
+basemap3 = WmsTileLayer(
+  url=('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png'),
   layers=None,
   name='Topography Map',
   attr='Topography Map',
@@ -307,11 +305,8 @@ WmsTileLayer(
 ).add_to(m)
 
 # ##### ESRI sattelite imagery service
-basemap4 = (
-    'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery' + '/MapServer/tile/{z}/{y}/{x}'
-)
-WmsTileLayer(
-  url=basemap4,
+basemap4 = WmsTileLayer(
+  url=('http://services.arcgisonline.com/arcgis/rest/services/World_Imagery' + '/MapServer/tile/{z}/{y}/{x}'),
   layers=None,
   name='ESRI Sattelite Imagery',
   attr='ESRI World Imagery',
@@ -319,11 +314,8 @@ WmsTileLayer(
 ).add_to(m)
 
 # ##### Google sattelite imagery service
-basemap5 = (
-    'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
-)
-WmsTileLayer(
-  url=basemap5,
+basemap5 = WmsTileLayer(
+  url=('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'),
   layers=None,
   name='Google Sattelite Imagery',
   attr='Google',
@@ -370,7 +362,7 @@ wilaya_admin_highlight_function = lambda x: {
 # main function of drawing and displaying the spatial feature 
 WILAYA_ADMIN_INFO = folium.features.GeoJson(
   wilaya_admin_borders,
-  name = 'Tipaza - Wilaya Administrative Borders',
+  name = 'Wilaya Borders',
   control = True,
   style_function = wilaya_admin_style_function, 
   highlight_function = wilaya_admin_highlight_function,
@@ -379,7 +371,8 @@ WILAYA_ADMIN_INFO = folium.features.GeoJson(
     fields=['name', 'area', 'density', 'city_code'],
     aliases=['Wilaya: ', 'Area (km2 ): ', 'Density (popualtion/km2): ', 'City Code: '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") # setting style for popup box
-  )
+  ),
+  show=False
 )
 m.add_child(WILAYA_ADMIN_INFO)
 
@@ -404,7 +397,7 @@ municipalities_admin_highlight_function = lambda x: {
 
 MUNICIPALITIES_ADMIN_INFO = folium.features.GeoJson(
   municipalities_admin_borders,
-  name = 'Tipaza - Municipalities Administrative Borders',
+  name = 'Municipalities Borders',
   control = True,
   style_function = municipalities_admin_style_function, 
   highlight_function = municipalities_admin_highlight_function,
@@ -412,7 +405,8 @@ MUNICIPALITIES_ADMIN_INFO = folium.features.GeoJson(
     fields=['name', 'ONS_Code'],
     aliases=['Municipality: ', 'ONS Code: '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
-  )
+  ),
+  show=False
 )
 m.add_child(MUNICIPALITIES_ADMIN_INFO)
 
@@ -444,7 +438,8 @@ LOGISTIC_ZONES_INFO = folium.features.GeoJson(
     fields=['name', 'area', 'district-jurisdiction', 'municipal-jurisdiction'],
     aliases=['Name: ', 'Area (Ha)', 'Jurisdiction (District): ', 'Jurisdiction (Municipality): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
-  )
+  ),
+  show=False
 )
 m.add_child(LOGISTIC_ZONES_INFO)
 
@@ -475,7 +470,8 @@ PORT_INFRASTRUCTURE_INFO = folium.features.GeoJson(
     fields=['name', 'area'],
     aliases=['Name: ', 'Area (Ha): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
-  )
+  ),
+  show=False
 )
 m.add_child(PORT_INFRASTRUCTURE_INFO)
 
@@ -508,7 +504,8 @@ CONSTRUCTION_ZONES_INFO = folium.features.GeoJson(
     fields=['name', 'zone-designation', 'area'],
     aliases=['Name: ', 'Zone designation: ', 'Area: '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;")
-  )
+  ),
+  show=False
 )
 m.add_child(CONSTRUCTION_ZONES_INFO)
 
@@ -537,22 +534,24 @@ ROADS_INFO = folium.features.GeoJson(
     fields=['Type', 'Name'],
     aliases=['Type: ', 'Name: '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
-  )
+  ),
+  show=False
 )
 m.add_child(ROADS_INFO)
 
 # ########## Natural features layers
 # ##### Shoreline
-folium.GeoJson(
+SHORELINE = folium.GeoJson(
   shoreline,
   name = 'Shoreline',
   tooltip = 'Shoreline',
   style_function = lambda feature : {
     'fillColor' : 'none',
     'color' : '#0070ec',
-    'weight' : 8,
+    'weight' : 4,
     'opacity' : 0.50,
-  }
+  },
+  show=False
 ).add_to(m)
 
 # ##### Affected Forests zones
@@ -582,7 +581,8 @@ FORESTS_AFFECTED_INFO = folium.features.GeoJson(
     fields=['name', 'type', 'status', 'section', 'ilot', 'area'],
     aliases=['Name: ', 'Type: ', 'Project status: ', 'Section: ', 'Ilot: ', 'Superficie Touchee (Ha): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
-  )
+  ),
+  show=False
 )
 m.add_child(FORESTS_AFFECTED_INFO)
 
@@ -615,7 +615,8 @@ FORESTS_PRESERVED_INFO = folium.features.GeoJson(
     fields=['name', 'type', 'status', 'area'],
     aliases=['Name: ', 'Type: ', 'Project status: ', 'Superficie (Ha): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
-  )
+  ),
+  show=False
 )
 m.add_child(FORESTS_PRESERVED_INFO)
 
@@ -648,7 +649,8 @@ AGRO_FARM_LAND_INFO = folium.features.GeoJson(
     fields=['designation', 'status'],
     aliases=['Land designation: ', 'Project status: '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
-  )
+  ),
+  show=False
 )
 m.add_child(AGRO_FARM_LAND_INFO)
 
@@ -679,7 +681,8 @@ WATERWAYS_INFO = folium.features.GeoJson(
     fields=['name', 'type'],
     aliases=['Name: ', 'Type: '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
-  )
+  ),
+  show=False
 )
 m.add_child(WATERWAYS_INFO)
 
@@ -725,7 +728,6 @@ m.add_ee_layer(contours, contours_params, 'Contour lines')
 
 #################### Layer controller ####################
 
-folium.LayerControl(collapsed=False).add_to(m)
 
 #################### MAP LEGEND ####################
 #<link rel="stylesheet" href="style.css">
@@ -742,6 +744,7 @@ legend_setup = """
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
         <link rel="stylesheet" href="src/ui.css">
+        <link rel="stylesheet" href="src/layers.css">
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
@@ -948,6 +951,20 @@ m.get_root().add_child(legend)
 
 ## print downloadable link you can download image by click link in the console
 #print (path)
+folium.LayerControl(collapsed=False).add_to(m)
+
+#################### LAYER GROUPS ####################
+GroupedLayerControl(
+    groups={
+      'BASEMAPS LAYER': [basemap2, basemap3, basemap4, basemap5],
+      'ADMINISTRATIVE LAYER': [WILAYA_ADMIN_INFO, MUNICIPALITIES_ADMIN_INFO],
+      'NATURAL LAYER': [FORESTS_AFFECTED_INFO, FORESTS_PRESERVED_INFO, AGRO_FARM_LAND_INFO, SHORELINE, WATERWAYS_INFO],
+      'INFRASTRUCTURE LAYER': [LOGISTIC_ZONES_INFO, PORT_INFRASTRUCTURE_INFO, CONSTRUCTION_ZONES_INFO, ROADS_INFO],
+    },
+    exclusive_groups=False,
+    collapsed=False
+).add_to(m)
+
 
 # Generating a file for the map and setting it to open on default browser
 m.save('webmap.html')
