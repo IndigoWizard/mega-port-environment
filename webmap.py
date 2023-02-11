@@ -790,7 +790,7 @@ legend_setup = """
     <div class="project-source">
       <div class="project-logo">
           <a href="https://github.com/IndigoWizard/mega-port-environment/tree/develop" title="Go to repository" target="_blank">
-            <i class="fa fa-github" aria-hidden="true" id="icons"></i>
+            <i class="fa-brands fa-github" aria-hidden="true" id="icons"></i>
           </a>
       </div>
 
