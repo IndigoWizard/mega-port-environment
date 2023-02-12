@@ -1,5 +1,5 @@
 .leaflet-control-layers-list {
-	height: 45vh;
+	/* height: 45vh; */
 	width: 200px;
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -9,7 +9,7 @@
 
 .leaflet-control-layers form {
 	/* height: 480px; */
-	height: 44vh;
+	height: 85vh;
 	z-index: 10000;
 	overflow-y: auto;
 	overflow-x: hidden;

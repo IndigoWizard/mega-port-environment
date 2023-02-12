@@ -25,13 +25,15 @@ ee.Initialize()
 # ##### earth-engine drawing method setup
 def add_ee_layer(self, ee_image_object, vis_params, name):
   map_id_dict = ee.Image(ee_image_object).getMapId(vis_params)
-  folium.raster_layers.TileLayer(
+  layer = folium.raster_layers.TileLayer(
       tiles = map_id_dict['tile_fetcher'].url_format,
       attr = 'Map Data &copy; <a href="https://earthengine.google.com/">Google Earth Engine</a>',
       name = name,
       overlay = True,
       control = True
-  ).add_to(self)
+  )
+  layer.add_to(self)
+  return layer
 
 # configuring earth engine display rendering method in folium
 folium.Map.add_ee_layer = add_ee_layer
@@ -278,7 +280,8 @@ miniMap = MiniMap(
   zoom_level_offset = -5,
   tile_layer='cartodbdark_matter',
   width=140,
-  height=100
+  height=100,
+  minimized=True
 )
 
 m.add_child(miniMap)
@@ -288,7 +291,7 @@ m.add_child(miniMap)
 # Adding different types of basemaps helps better visualize the different map features.
 
 # ########## Primary basemaps (victor data):
-basemap1 = folium.TileLayer('cartodbdark_matter', name='ENVIRONEMENTAL INDEXES')
+basemap1 = folium.TileLayer('cartodbdark_matter', name='Dark Matter Basemap')
 basemap1.add_to(m)
 
 basemap2 = folium.TileLayer('openstreetmap', name='Open Street Map', show=False)
@@ -690,41 +693,41 @@ m.add_child(WATERWAYS_INFO)
 #################### COMPUTED RASTER LAYERS ####################
 
 # adding main satellite image as layer
-m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
+TCI = m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
 
 # ##### SRTM elevation & slopes
 # adding DEM layer
 #m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
 
 # adding Hillshades
-m.add_ee_layer(hillshade, hillshade_params, "Hillshade")
+HILLSHADE = m.add_ee_layer(hillshade, hillshade_params, "Hillshade")
 
 # adding SRTM elevation layer
-m.add_ee_layer(elevation, elevation_params, 'Elevation')
+ELEVATION = m.add_ee_layer(elevation, elevation_params, 'Elevation')
 
 # adding slopes layer
-m.add_ee_layer(slopes, slopes_params, 'Slopes')
+SLOPES = m.add_ee_layer(slopes, slopes_params, 'Slopes')
 
 # adding EVI layer to the map
-m.add_ee_layer(evi_masked, evi_params, 'EVI')
+EVI = m.add_ee_layer(evi_masked, evi_params, 'EVI')
 
 # adding NDMI layer
-m.add_ee_layer(ndmi_classified, ndmi_params, 'NDMI - Classified')
+NDMI_CLASSIFIED = m.add_ee_layer(ndmi_classified, ndmi_params, 'NDMI - Classified')
 
 # adding NDVI layer to the map
-m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
+NDVI = m.add_ee_layer(ndvi_masked, ndvi_params, 'NDVI')
 
 # adding Classified NDVI layer to the map
-m.add_ee_layer(ndvi_classified, ndvi_classified_params, 'NDVI - Classified')
+NDVI_CLASSIFIED = m.add_ee_layer(ndvi_classified, ndvi_classified_params, 'NDVI - Classified')
 
 # adding NDBI layer
-m.add_ee_layer(ndbi_masked, ndbi_params, 'NDBI')
+NDBI = m.add_ee_layer(ndbi_masked, ndbi_params, 'NDBI')
 
 # adding NDWI layer to the map
-m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
+NDWI = m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
 
 # adding contour lines to the map
-m.add_ee_layer(contours, contours_params, 'Contour lines')
+CONTOURS = m.add_ee_layer(contours, contours_params, 'Contour lines')
 
 #################### Layer controller ####################
 
@@ -960,6 +963,7 @@ GroupedLayerControl(
       'ADMINISTRATIVE LAYER': [WILAYA_ADMIN_INFO, MUNICIPALITIES_ADMIN_INFO],
       'NATURAL LAYER': [FORESTS_AFFECTED_INFO, FORESTS_PRESERVED_INFO, AGRO_FARM_LAND_INFO, SHORELINE, WATERWAYS_INFO],
       'INFRASTRUCTURE LAYER': [LOGISTIC_ZONES_INFO, PORT_INFRASTRUCTURE_INFO, CONSTRUCTION_ZONES_INFO, ROADS_INFO],
+      'ENVIRONEMENTAL INDICIES': [TCI, HILLSHADE, ELEVATION, SLOPES, EVI, NDMI_CLASSIFIED, NDVI, NDVI_CLASSIFIED, NDBI, NDWI, CONTOURS],
     },
     exclusive_groups=False,
     collapsed=False
