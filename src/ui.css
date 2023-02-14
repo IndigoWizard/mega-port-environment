@@ -1,8 +1,23 @@
+:root {
+	--colorMain: #292a4c;
+	--colorDark: #262843;
+	--colorDarker: #d5d8e6;
+	--colorDarkerUltra: #1c1938;
+	--colorPurple: #865ca4;
+	--colorVariant: #c46198;
+	--colorVariantDark: #a13a82;
+	--colorVariantDark2: #eb2282;
+	--colorVariantVivid: #bc1d33;
+	--colorLightBlue: #17cee2;
+	--textTitle: #e6e6e5;
+	--textMain: #a2b2b8;
+}
+
 .ui-container {
 	position: absolute;
 	z-index: 999;
-	border: 2px solid #d7a45d;
-	background-color: rgba(255, 255, 255, 0.85);
+	border: 2px solid grey;
+	background-color: rgba(207, 232, 255, 0.75);
 }
 
 #title-container {
@@ -17,7 +32,7 @@
 
 .map-title {
 	text-align: center;
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(207, 232, 255, 0.5);
   color: #333333;
   font-family: arial;
   font-size: 14px;
@@ -32,12 +47,7 @@
 	font-size: 14px;
 	left: 5px;
 	bottom: 45px;
-	top: 10px;
-	width: 300px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	scrollbar-color: #d7a45d #d4aa7080;
-  scrollbar-width: thin;
+  margin-top: 75px;
 }
 
 p {
@@ -163,14 +173,12 @@ h4 {
 }
 
 .leaflet-control-zoom.leaflet-bar.leaflet-control{
-  left: 296px;
+  left: 280px;
 }
-
 .leaflet-control-scale-line {
   font-size: 14px;
   font-weight: bold;
 }
-
 #project-container{
   border-radius: 5px;
   padding: 2px 7px;
@@ -197,8 +205,6 @@ h4 {
 
 .project-stats {
   list-style: none;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
 }
 
 .project-stats li {
@@ -209,8 +215,8 @@ h4 {
 .project-stats i {
   display: inline-block;
   padding: 0 4px;
+  font-size: 16px;
 	margin-left: 8px;
-  font-size: 14px;
 }
 
 .project-link{
@@ -218,36 +224,10 @@ h4 {
   font-weight: bold;
 }
 
-.leaflet-control-layers-toggle {
-	background-image: url(https://www.pixenli.com/image/RN6QMlKY);
-}
-
+/*
 .leaflet-control-layers-separator {
   height: 0;
-  border-top: 2px solid #d4aa70;
-  margin: 10px 10px;
+  border-top: 2px solid #656565;
+  margin: 5px -10px 5px -6px;
 }
-
-.leaflet-control-layers-list.leaflet-control-layers-scrollbar{
-	scrollbar-color: #d7a45d #d4aa7080;
-  scrollbar-width: thin;
-}
-
-.ghtext {
-	font-family: Arial, sans-serif;
-	font-weight: 600;
-	font-size: 12px;
-}
-
-#icons {
-	color: #575757;
-	transition: 0.2s ease-in-out;
-}
-#icons:hover {
-	color: #d7a45d;
-	transition: 0.2s ease-in-out;
-}
-#icons:hover::after {
-	color: #575757;
-	transition: 0.2s ease-out;
-}
+*/
