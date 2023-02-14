@@ -278,7 +278,8 @@ miniMap = MiniMap(
   zoom_level_offset = -5,
   tile_layer='cartodbdark_matter',
   width=140,
-  height=100
+  height=100,
+  minimized=True
 )
 
 m.add_child(miniMap)
