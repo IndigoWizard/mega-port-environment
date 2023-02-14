@@ -4,7 +4,7 @@
 
 Open for contribution!
 
-Project website: [CHERCHELL CENTER PORT - ENVIRONEMENTAL STUDY](https://indigowizard.github.io/mega-port-environment/webmap.html)
+Project website: https://indigowizard.github.io/mega-port-environment/webmap.html
 
 # [Table of Content](#table-of-content)
 - [Introduction](#introduction)
@@ -42,7 +42,7 @@ A layered static preview of the multiple availble layers within the map currentl
 ## User and installation guide
 **For end users:**
 
-You can simply access the website of the project as it is here: [Project website](https://indigowizard.github.io/mega-port-environment/webmap.html)
+You can simply access the website of the project as it is here: [Project website](https://indigowizard.github.io/mega-port-environment/web-map.html)
 
 **For devs:**
 
@@ -105,7 +105,7 @@ It's important that you check the **issues** section before:
 - **Implementing features**
 - **Writing documentation**
 
-If no issue alrady exists regarding your contribution subject you may open a new issue and get to work.
+If no issue alrady exists regarding your contribution subject you may open an issue and get to work.
 
 #### Credit
 Project by Ahmed I. Mokhtari.
