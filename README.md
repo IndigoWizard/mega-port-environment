@@ -2,9 +2,13 @@
 ##### TL;DR:
 > This serves as the main repo for the satellite imagery analysis and cartography project for the Algerian mega port project in *El-Hamdania, Cherchell, Tipaza*.
 
-Open for contribution!
+Open for contribution! (I see you, hacktoberfest enthousiasts 👀)
 
 Project website: [CHERCHELL CENTER PORT - ENVIRONEMENTAL STUDY](https://indigowizard.github.io/mega-port-environment/webmap.html)
+
+**IMPORTANT NOTE:** ⚠️
+
+The Earth Engine token expires every 48H, so after that the layers won't show up and the webapp may seem like not working, it's not, it's just that I don't update the token from my personal google earth engine account unless you need a live demo, otherwise check the preview section.
 
 # [Table of Content](#table-of-content)
 - [Introduction](#introduction)
