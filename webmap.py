@@ -70,18 +70,22 @@ image_params = {
 
 # ########## Elevation
 
-# ##### NASA DEM (Digital Elevation Model) collection: 30m resolution
-dem = ee.Image('CGIAR/SRTM90_V4').clip(aoi)
+# ##### JAXA ALOS DSM: Global 30m  (Digital Surface Model)
+dem = ee.Image('JAXA/ALOS/AW3D30/V2_2').clip(aoi)
 
-# visual parameters for the DEM imagery
+# masking the DSM to the surface of the earth only
+dem = dem.updateMask(dem.gt(0))
+
+# visual parameters for the DSM imagery
 dem_params = {
   'min': 0,
-  'max': 905
+  'max': 905,
+  'bands': ['AVE_DSM']
 }
 
 # ##### Elevation
-# deriving elevation from previous DEM
-elevation = dem.select('elevation').clip(aoi)
+# deriving elevation from previous DSM
+elevation = dem.select('AVE_DSM').clip(aoi)
 
 # visual parameters for the elevation imagery
 elevation_params = {
@@ -103,7 +107,7 @@ hillshade_params = {
 }
 
 # ##### Slopes (30m resolution)
-# deriving slopes from previous DEM through Elevation
+# deriving slopes from previous DSM through Elevation
 slopes = ee.Terrain.slope(elevation).clip(aoi)
 
 # visual parameters for the slopes imagery
@@ -115,14 +119,14 @@ slopes_params = {
 }
 
 # ##### Contour lines
-# deriving countour lines from previous DEM through Terrain
-contours = geemap.create_contours(dem, 0, 905, 20, region=aoi)
+# deriving countour lines from previous DSM through Terrain
+contours = geemap.create_contours(elevation, 0, 905, 20, region=aoi)
 
 # visual parameters for the contour lines
 contours_params = {
   'min': 0,
   'max': 1000,
-  'palette': ['#440044', '#00FFFF', '#00FFFF', '#00FFFF'],
+  'palette' : ['#053061', '#2166ac', '#4393c3', '#92c5de', '#d1e5f0', '#f7f7f7', '#fddbc7', '#f4a582', '#d6604d', '#b2182b', '#67001f'],
   'opacity': 0.3
 }
 
@@ -696,8 +700,8 @@ m.add_child(WATERWAYS_INFO)
 TCI = m.add_ee_layer(image_satellite, image_params, 'Sentinel-2 True Colors')
 
 # ##### SRTM elevation & slopes
-# adding DEM layer
-#m.add_ee_layer(dem, dem_params, 'NASA DEM 30m')
+# adding DSM layer
+#m.add_ee_layer(dem, dem_params, 'NASA DSM 30m')
 
 # adding Hillshades
 HILLSHADE = m.add_ee_layer(hillshade, hillshade_params, "Hillshade")
@@ -889,8 +893,8 @@ legend_setup = """
           </div>
 
           <div class="index-gradient-container">
-            <div class='legend-scale' id="DEM">
-              <h4>DEM</h4>
+            <div class='legend-scale' id="DSM">
+              <h4>DSM</h4>
               <div class="inside-container">
                 <div class="gradient-block">
                   <span id="dem-gradient"></span>
