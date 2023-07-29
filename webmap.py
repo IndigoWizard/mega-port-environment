@@ -47,10 +47,11 @@ folium.Map.add_ee_layer = add_ee_layer
 # Buffer/Circular AOI
 aoi = ee.Geometry.Point([2.310362, 36.577489]).buffer(10500)
 
-# Passing main Sentinel-2 imagery ID: image1 (date: 2021-10-21)
+# Passing main Sentinel-2 imagery ID:
 # 2021-10-19: COPERNICUS/S2/20211019T104051_20211019T104645_T31SDA
 # 2021-02-16: COPERNICUS/S2/20210216T104019_20210216T104758_T31SDA
 # 2022-02-18: COPERNICUS/S2_SR/20220218T102949_20220218T103126_T31SDA
+# 2023-02-13: COPERNICUS/S2_SR/20230213T103039_20230213T103136_T31SDA
 image = ee.Image('COPERNICUS/S2_SR/20220218T102949_20220218T103126_T31SDA')
 image_2 = ee.Image('COPERNICUS/S2/20220218T102949_20220218T103126_T31SDA')
 
@@ -478,7 +479,7 @@ PORT_INFRASTRUCTURE_INFO = folium.features.GeoJson(
     aliases=['Name: ', 'Area (Ha): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   ),
-  show=False
+  show=True
 )
 m.add_child(PORT_INFRASTRUCTURE_INFO)
 
@@ -589,7 +590,7 @@ FORESTS_AFFECTED_INFO = folium.features.GeoJson(
     aliases=['Name: ', 'Type: ', 'Project status: ', 'Section: ', 'Ilot: ', 'Superficie Touchee (Ha): '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   ),
-  show=False
+  show=True
 )
 m.add_child(FORESTS_AFFECTED_INFO)
 
@@ -657,7 +658,7 @@ AGRO_FARM_LAND_INFO = folium.features.GeoJson(
     aliases=['Land designation: ', 'Project status: '],
     style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
   ),
-  show=False
+  show=True
 )
 m.add_child(AGRO_FARM_LAND_INFO)
 
