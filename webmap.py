@@ -273,7 +273,18 @@ ndmi_classified = ee.Image(ndmi) \
   .where(ndmi.gte(0.5), 8) \
 
 # NDMI visual parameters are set to use the unclassified NDMI style (ndmi_params)
-
+# Masking
+masked_ndwi = ndwi.updateMask(ndwi.gt(0.1))
+binaryMask = ndwi.lt(0)
+waterMask = binaryMask.selfMask()
+masked_ndvi_classified = ndvi_classified.updateMask(waterMask)
+# Image mosaic NDVI x NDWI
+finalImg = ee.ImageCollection([masked_ndvi_classified, masked_ndwi]).mosaic()
+finalimg_params = {
+    'min': 0,
+    'max': 7,
+    'palette': ['#00FFFF', '#a50026', '#ed5e3d', '#f9f7ae', '#fec978', '#9ed569', '#229b51', '#006837']
+}
 ###########################################################
 #################### MAIN PROJECT MAP ####################
 # setting up the main map for the project
@@ -731,6 +742,9 @@ NDBI = m.add_ee_layer(ndbi_masked, ndbi_params, 'NDBI')
 # adding NDWI layer to the map
 NDWI = m.add_ee_layer(ndwi_masked, ndwi_params, 'NDWI')
 
+# final image
+FINALAYER = m.add_ee_layer(finalImg, finalimg_params, "FINAL IMAGE")
+
 # adding contour lines to the map
 CONTOURS = m.add_ee_layer(contours, contours_params, 'Contour lines')
 
@@ -968,7 +982,7 @@ GroupedLayerControl(
       'ADMINISTRATIVE LAYER': [WILAYA_ADMIN_INFO, MUNICIPALITIES_ADMIN_INFO],
       'NATURAL LAYER': [FORESTS_AFFECTED_INFO, FORESTS_PRESERVED_INFO, AGRO_FARM_LAND_INFO, SHORELINE, WATERWAYS_INFO],
       'INFRASTRUCTURE LAYER': [LOGISTIC_ZONES_INFO, PORT_INFRASTRUCTURE_INFO, CONSTRUCTION_ZONES_INFO, ROADS_INFO],
-      'ENVIRONEMENTAL INDICIES': [TCI, HILLSHADE, ELEVATION, SLOPES, EVI, NDMI_CLASSIFIED, NDVI, NDVI_CLASSIFIED, NDBI, NDWI, CONTOURS],
+      'ENVIRONEMENTAL INDICIES': [TCI, HILLSHADE, ELEVATION, SLOPES, EVI, NDMI_CLASSIFIED, NDVI, NDVI_CLASSIFIED, NDBI, NDWI, FINALAYER, CONTOURS],
     },
     exclusive_groups=False,
     collapsed=False
